@@ -38,3 +38,6 @@ jobs:
             done
           done
           echo ok
+      - name: demo.json is a tickcheck --json report the drawer can read
+        run: |
+          curl -s https://blackman99.github.io/tickcheck/demo.json | python3 -c "import json,sys; r=json.load(sys.stdin); assert r['demo'] and r['envs'] and r['envs'][0]['hooks'][0]['file']['path']; print(len(r['envs']), 'envs')"

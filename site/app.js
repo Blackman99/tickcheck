@@ -359,9 +359,19 @@
   });
   replayBtn.addEventListener('click', () => { build(current); census(); });
 
+  // a `tickcheck --json` report -> what the drawer draws (demo.json is the raw --demo report)
+  function fromReport(r) {
+    if (!r || !Array.isArray(r.envs)) throw new Error('no "envs" array: is this `tickcheck --json` output?');
+    const home = r.home || '';
+    const t = p => home && p.startsWith(home) ? '~' + p.slice(home.length) : p;
+    return { envs: r.envs.map(e => ({ root: t(e.root), kind: e.kind, python: e.python || '', verdict: e.verdict,
+      hooks: (e.hooks || []).map(h => ({ name: h.file.path.split(/[\\/]/).pop(), verdict: h.verdict,
+        owner: h.file.owner ? `${h.file.owner.name} ${h.file.owner.version}` : '', reasons: h.reasons || [], known: h.known_as || '' })) })) };
+  }
+
   let current = null;
   fetch('demo.json').then(r => r.json()).then(d => {
-    current = d; build(d); requestAnimationFrame(loop);
+    current = fromReport(d); build(current); requestAnimationFrame(loop);
     const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); census(); } }, { threshold: .3 });
     io.observe(svg);
   });
@@ -406,12 +416,7 @@
   const load = async f => {
     err.textContent = '';
     try {
-      const r = JSON.parse(await f.text());
-      if (!Array.isArray(r.envs)) throw new Error('no "envs" array: is this `tickcheck --json` output?');
-      const home = r.home || '';
-      const t = p => home && p.startsWith(home) ? '~' + p.slice(home.length) : p;
-      const envs = r.envs.map(e => ({ root: t(e.root), kind: e.kind, python: e.python || '', verdict: e.verdict,
-        hooks: (e.hooks || []).map(h => ({ name: h.file.path.split(/[\\/]/).pop(), verdict: h.verdict, owner: h.file.owner ? `${h.file.owner.name} ${h.file.owner.version}` : '', reasons: h.reasons || [], known: h.known_as || '' })) }));
+      const { envs } = fromReport(JSON.parse(await f.text()));
       if (!envs.length) throw new Error('that report has no Python environments in it');
       current = { envs }; build(current);
       document.querySelector('.cabinet').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
