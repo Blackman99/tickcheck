@@ -32,6 +32,7 @@ var pruneNames = map[string]bool{
 	"__pycache__": true, ".tox-cache": true, "huggingface": true, "torch": true,
 	"google-chrome": true, "chromium": true, "mozilla": true, "Mail": true,
 	"Photos Library.photoslibrary": true, ".docker": true, "proc": true,
+	"tickcheck-demo": true, ".tickcheck": true, // our own demo home and quarantine
 }
 
 var pyVerRE = regexp.MustCompile(`(?i)python(\d+\.\d+t?)`)
