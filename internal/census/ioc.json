@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "incidents": [
+    {
+      "id": "litellm-2026-10-21",
+      "title": "LiteLLM 1.107.0 on PyPI and Docker (cook.pth + sitecustomize.py stealer/loader)",
+      "sources": [
+        "https://docs.litellm.ai/blog/security-incident-oct-21-2026",
+        "https://github.com/BerriAI/litellm/issues/47826"
+      ],
+      "dists": [{"name": "litellm", "versions": ["1.107.0"]}],
+      "fix": "pin litellm==1.106.2 and rebuild the env from scratch",
+      "file_sha256": {
+        "7f191632e7320705d154b85204f1ae546b543acbd7e8861229b76f5042b92bdb": "cook.pth (import cook)",
+        "9dd0a3926f96a37eb86cf1ee2310d9be93139cc4ebef3ef9e2efe9531390be25": "cook.py (privcollect stealer wrapper)",
+        "34bef04fe88ac9d0aae0475630b1738681d15b94f233ac8aa46eacf5968305fa": "sitecustomize.py (hourly remote-code loader)",
+        "6ea3d8ef6cf73a72d8df24f663b7a31ce67494eeb9b0d707b93484e66675d2df": "decoded stealer (cook.py variant)",
+        "20a59e5a285799e7cf7fa16cfba1c1414f1e84a8459e14207cfd4e998c2cd24b": "decoded stealer (sitecustomize variant)",
+        "7598727f209d717041db37f7dca271d3a7d328a279890e0e1d55375729aeb86d": "litellm-1.107.0-cp310-abi3-macosx_10_12_x86_64.whl",
+        "0aaf7ba346d41ef2f40390436738b001180d5a1c03aa093f121078a9969d9a1a": "litellm-1.107.0-cp310-abi3-macosx_11_0_arm64.whl",
+        "668169d35b87bf51324080390b1b1c5ab12bd335cfe5f1a99e3689abd5e02ae6": "litellm-1.107.0-cp310-abi3-manylinux_2_28_aarch64.whl",
+        "462d0c9f67ca522d9e0e4acd245e90b36ce0d5353604a66bb7c43a1ec4a6fcf7": "litellm-1.107.0-cp310-abi3-manylinux_2_28_x86_64.whl",
+        "c2e32d0ce2548aa662c18bf5001911a79fe5b30cf8357132275add02fdcde054": "litellm-1.107.0-cp310-abi3-musllinux_1_2_aarch64.whl",
+        "1bbce8caa94f01c0aaa0b7ddae51553a8a32e1ce53d96d44fe583272aff7ad00": "litellm-1.107.0-cp310-abi3-musllinux_1_2_x86_64.whl",
+        "12d4ccc5c6f8d35cf4f2cf233b7f3e418e863e657d81ff5f5fc9e210005b9484": "litellm-1.107.0-cp310-abi3-win_amd64.whl"
+      },
+      "host_globs": [".pc_once_*", "remote_code_loader.lock", ".pc_sq_*", ".pc_e_*"],
+      "lock_files": ["remote_code_loader.lock"],
+      "env_markers": ["PRIVCOLLECT_ACTIVE=1"]
+    }
+  ]
+}

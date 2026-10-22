@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Keys pasted into agent chats (transcripts)
+    url: https://github.com/Blackman99/spillscan
+    about: keyroll does not scan session transcripts; spillscan does.
