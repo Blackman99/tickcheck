@@ -1,0 +1,236 @@
+{
+ "envs": [
+  {
+   "root": "~/proj/agent-proxy/.venv",
+   "kind": "venv",
+   "python": "3.12",
+   "verdict": "BAD",
+   "hooks": [
+    {
+     "name": "_virtualenv.pth",
+     "verdict": "OK",
+     "owner": "",
+     "reasons": [
+      "virtualenv / uv venv patch"
+     ],
+     "line": "import _virtualenv",
+     "known": "virtualenv / uv venv patch",
+     "by": []
+    },
+    {
+     "name": "cook.pth",
+     "verdict": "BAD",
+     "owner": "litellm 1.107.0",
+     "reasons": [
+      "cook.pth is byte-identical to cook.pth (import cook) in litellm-2026-10-21",
+      "litellm 1.107.0 is listed in litellm-2026-10-21 (it installed cook.pth, cook.py)",
+      "cook.py: encoded blob \u2192 exec, long encoded literal, detaches (fork/setsid)"
+     ],
+     "line": "import cook",
+     "known": "",
+     "by": [
+      {
+       "harness": "Claude Code",
+       "when": "2026-10-21T11:51:40Z",
+       "cwd": "~/proj/agent-proxy",
+       "cmd": "uv add litellm[proxy]",
+       "file": "~/.claude/projects/-home-dana-proj-agent-proxy/5b1e2c90-demo.jsonl:2"
+      }
+     ]
+    },
+    {
+     "name": "distutils-precedence.pth",
+     "verdict": "OK",
+     "owner": "setuptools 80.9.0",
+     "reasons": [
+      "setuptools distutils shim"
+     ],
+     "line": "import os; var = 'SETUPTOOLS_USE_DISTUTILS'; enabled = os.environ.get(var, 'local') == 'local'; enabled and __import__('_distutils_hack').add_shim(); ",
+     "known": "setuptools distutils shim",
+     "by": []
+    },
+    {
+     "name": "sitecustomize.py",
+     "verdict": "BAD",
+     "owner": "litellm 1.107.0",
+     "reasons": [
+      "litellm 1.107.0 is listed in litellm-2026-10-21 (it installed sitecustomize.py)",
+      "sitecustomize.py: network, detaches (fork/setsid)"
+     ],
+     "line": "",
+     "known": "",
+     "by": [
+      {
+       "harness": "Claude Code",
+       "when": "2026-10-21T11:51:40Z",
+       "cwd": "~/proj/agent-proxy",
+       "cmd": "uv add litellm[proxy]",
+       "file": "~/.claude/projects/-home-dana-proj-agent-proxy/5b1e2c90-demo.jsonl:2"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "root": "~/work/scraper/.claude/worktrees/agent-7c1e/.venv",
+   "kind": "venv \u00b7 agent worktree",
+   "python": "3.12",
+   "verdict": "SUSPECT",
+   "hooks": [
+    {
+     "name": "_virtualenv.pth",
+     "verdict": "OK",
+     "owner": "",
+     "reasons": [
+      "virtualenv / uv venv patch"
+     ],
+     "line": "import _virtualenv",
+     "known": "virtualenv / uv venv patch",
+     "by": []
+    },
+    {
+     "name": "fastjsonx_rt.pth",
+     "verdict": "SUSPECT",
+     "owner": "fastjsonx 0.4.1",
+     "reasons": [
+      "fastjsonx_rt.py: network, reads credentials"
+     ],
+     "line": "import fastjsonx_rt; fastjsonx_rt.boot()",
+     "known": "",
+     "by": [
+      {
+       "harness": "Codex",
+       "when": "2026-10-20T09:33:02Z",
+       "cwd": "~/work/scraper/.claude/worktrees/agent-7c1e",
+       "cmd": "pip install fastjsonx",
+       "file": "~/.codex/sessions/2026/10/20/rollout-2026-10-20T09-31-12-demo.jsonl:1"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "root": "~/.local/lib/python3.12/site-packages",
+   "kind": "user site",
+   "python": "3.12",
+   "verdict": "REVIEW",
+   "hooks": [
+    {
+     "name": "usercustomize.py",
+     "verdict": "REVIEW",
+     "owner": "",
+     "reasons": [
+      "usercustomize.py is not in any installed package's RECORD"
+     ],
+     "line": "",
+     "known": "",
+     "by": []
+    }
+   ]
+  },
+  {
+   "root": "~/miniforge3/envs/rag",
+   "kind": "conda",
+   "python": "3.11",
+   "verdict": "REVIEW",
+   "hooks": [
+    {
+     "name": "aaa_profiler.pth",
+     "verdict": "REVIEW",
+     "owner": "",
+     "reasons": [
+      "aaa_profiler.pth and profiler_boot.py are not in any installed package's RECORD"
+     ],
+     "line": "import profiler_boot",
+     "known": "",
+     "by": []
+    },
+    {
+     "name": "zope.interface-7.1.0-py3.11-nspkg.pth",
+     "verdict": "OK",
+     "owner": "zope.interface 7.1.0",
+     "reasons": [
+      "namespace package (-nspkg)"
+     ],
+     "line": "import sys, types, os;has_mfs = sys.version_info > (3, 5);p = os.path.join(sys._getframe(1).f_locals['sitedir'], *('zope',))",
+     "known": "namespace package (-nspkg)",
+     "by": []
+    }
+   ]
+  },
+  {
+   "root": "~/.local/pipx/venvs/httpie",
+   "kind": "pipx",
+   "python": "3.12",
+   "verdict": "OK",
+   "hooks": []
+  },
+  {
+   "root": "~/.local/share/uv/tools/llm",
+   "kind": "uv tool",
+   "python": "3.12",
+   "verdict": "OK",
+   "hooks": [
+    {
+     "name": "_virtualenv.pth",
+     "verdict": "OK",
+     "owner": "",
+     "reasons": [
+      "virtualenv / uv venv patch"
+     ],
+     "line": "import _virtualenv",
+     "known": "virtualenv / uv venv patch",
+     "by": []
+    }
+   ]
+  },
+  {
+   "root": "~/.pyenv/versions/3.11.9",
+   "kind": "pyenv",
+   "python": "3.11",
+   "verdict": "OK",
+   "hooks": [
+    {
+     "name": "__editable__.mytool-0.3.0.pth",
+     "verdict": "OK",
+     "owner": "mytool 0.3.0",
+     "reasons": [
+      "editable install (PEP 660)"
+     ],
+     "line": "import __editable___mytool_0_3_0_finder; __editable___mytool_0_3_0_finder.install()",
+     "known": "editable install (PEP 660)",
+     "by": []
+    },
+    {
+     "name": "distutils-precedence.pth",
+     "verdict": "OK",
+     "owner": "setuptools 75.1.0",
+     "reasons": [
+      "setuptools distutils shim"
+     ],
+     "line": "import os; var = 'SETUPTOOLS_USE_DISTUTILS'; enabled = os.environ.get(var, 'local') == 'local'; enabled and __import__('_distutils_hack').add_shim(); ",
+     "known": "setuptools distutils shim",
+     "by": []
+    }
+   ]
+  }
+ ],
+ "counts": {
+  "envs": 7,
+  "hooks": 12,
+  "bad": 2,
+  "suspect": 1,
+  "review": 2,
+  "ok": 7
+ },
+ "caches": [
+  "~/.cache/uv/archive-v0/Xq3tVb1/litellm-1.107.0.dist-info"
+ ],
+ "exposed": [
+  "~/.aws/credentials",
+  "~/.claude/.credentials.json",
+  "~/.codex/auth.json",
+  "~/.config/gh/hosts.yml",
+  "~/.ssh/id_ed25519"
+ ]
+}

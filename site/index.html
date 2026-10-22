@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>tickcheck: what runs every time Python starts, checked without starting Python</title>
+<meta name="description" content="A single Go binary that lists every .pth and sitecustomize startup hook in every Python environment on your machine, who installed it and whether it belongs. It never starts Python. Built after the LiteLLM 1.107.0 cook.pth drop.">
+<link rel="canonical" href="https://blackman99.github.io/tickcheck/">
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/logo-512.png">
+<meta name="theme-color" content="#4a1a22">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="tickcheck">
+<meta property="og:title" content="tickcheck: what runs every time Python starts?">
+<meta property="og:description" content="Every .pth / sitecustomize startup hook in every Python env on your machine, with owner and verdict. Never starts Python, so a hook like LiteLLM 1.107.0's cook.pth can't fire while you look.">
+<meta property="og:url" content="https://blackman99.github.io/tickcheck/">
+<meta property="og:image" content="https://blackman99.github.io/tickcheck/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A museum specimen drawer of Python environments; one pinned tick labelled cook.pth, det. BAD, litellm 1.107.0.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="tickcheck: what runs every time Python starts?">
+<meta name="twitter:description" content="Lists every startup hook in every Python env, with owner and verdict, without starting Python.">
+<meta name="twitter:image" content="https://blackman99.github.io/tickcheck/og.png">
+<meta name="twitter:image:alt" content="A specimen drawer of Python environments with cook.pth flagged BAD.">
+<link rel="preload" href="fonts/YoungSerif-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/XanhMono-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="cabinet">
+  <div class="topbar"><span>Drawer 1 of 1 · coll. your machine</span>
+    <nav aria-label="site"><a href="docs/">Docs</a><a href="#key">The key</a><a href="https://github.com/Blackman99/tickcheck">GitHub</a></nav></div>
+  <div class="drawer">
+    <svg id="drawer" role="img" aria-labelledby="dtitle" tabindex="0" viewBox="0 0 1200 720"><title id="dtitle">A specimen drawer: seven Python environments from tickcheck --demo, each startup hook pinned with its verdict.</title></svg>
+    <button class="replay" id="replay" type="button">↻ replay the census</button>
+  </div>
+  <div class="drawer-front">
+    <div class="holder">
+      <h1>tick<i>check</i></h1>
+      <p>What runs every time Python starts? Checked without starting Python.</p>
+      <span class="taxon">Ixodida pythonica · startup hooks of every environment on one machine</span>
+    </div>
+    <div class="pull-handle" aria-hidden="true"></div>
+    <div class="slip" id="slip" aria-live="polite"><b>det.</b><span id="sliptext">Seven environments in the drawer. Watch the lens, or move it yourself.</span></div>
+    <div class="ctas">
+      <div class="cmd"><code id="installcmd">curl -fsSL https://blackman99.github.io/tickcheck/install.sh | sh</code><button type="button" data-copy="installcmd">Copy</button></div>
+      <a class="btn ghost" href="docs/">Read the docs</a>
+      <span class="hint">then <code>tickcheck --demo</code> · Linux, macOS, Windows · one Go binary</span>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<section class="squeeze">
+  <div class="wrap">
+    <p class="kicker">§1 · field rule</p>
+    <h2>Found a tick? Don't squeeze it.<br>Found a <span>cook.pth</span>? Don't start Python.</h2>
+    <p class="lead">LiteLLM 1.107.0 (PyPI and Docker, 21 Oct 2026) put three files at the top of <code>site-packages</code>. One of them, <code>cook.pth</code>, is 12 bytes: <code>import cook</code>. Python's <code>site</code> module runs every <code>.pth</code> line that starts with <code>import</code>, on every interpreter start, and <code>sitecustomize.py</code> is imported right after. Nothing has to import litellm. So the first thing most people reach for runs the stealer again.</p>
+    <div class="race" id="race">
+      <div class="lane bad"><span class="who">$ pip show litellm</span>
+        <ol><li><span>python starts</span></li><li><span>site.py reads cook.pth</span></li><li><span>import cook</span></li><li class="hit"><span>stealer runs again</span></li></ol></div>
+      <div class="lane good"><span class="who">$ tickcheck</span>
+        <ol><li><span>reads files</span></li><li><span>hashes, RECORDs, transcripts</span></li><li class="hit"><span>BAD · nothing ran</span></li></ol></div>
+    </div>
+    <p class="fact">sha256 of those 12 bytes: <code>7f191632…2bdb</code>, as published in <a href="https://github.com/BerriAI/litellm/issues/47826">BerriAI/litellm#47826</a>. The vendor's own notice: "Don't start with pip install. Any Python start in the affected environment runs cook.pth and sitecustomize.py again." (<a href="https://docs.litellm.ai/blog/security-incident-oct-21-2026">docs.litellm.ai</a>)</p>
+  </div>
+</section>
+
+<section class="key" id="key">
+  <div class="wrap">
+    <p class="kicker">§2 · key to the verdicts</p>
+    <h2>A dichotomous key, not a vibe.</h2>
+    <p class="lead">Every hook is keyed out the same way, from the file alone. Pick a specimen from the demo drawer to see the route it takes.</p>
+    <div class="specimens" role="group" aria-label="specimens">
+      <button type="button" data-route="1b 2a" aria-pressed="true">cook.pth</button>
+      <button type="button" data-route="1b 2b 3b 5b 6b">fastjsonx_rt.pth</button>
+      <button type="button" data-route="1b 2b 3a 4b">aaa_profiler.pth</button>
+      <button type="button" data-route="1b 2b 3b 5b 6a">distutils-precedence.pth</button>
+      <button type="button" data-route="1a">httpie.pth</button>
+    </div>
+    <ol class="couplets" id="couplets">
+      <li data-c="1a" class="a"><span class="n">1a</span><span class="t"><span class="tx">A <code>.pth</code> whose lines are all paths (none starts with <code>import</code>)</span></span><span class="go">nothing runs · not listed</span></li>
+      <li data-c="1b"><span class="n">1b</span><span class="t"><span class="tx">A <code>.pth</code> line starts with <code>import</code> + space/tab, or the file is <code>sitecustomize</code> / <code>usercustomize</code></span></span><span class="go">→ 2</span></li>
+      <li data-c="2a" class="a ind1"><span class="n">2a</span><span class="t"><span class="tx">Its sha256, or its package's name + version, is in the IOC feed</span></span><span class="go"><span class="chip v-BAD">BAD</span></span></li>
+      <li data-c="2b" class="ind1"><span class="n">2b</span><span class="t"><span class="tx">Not in the feed</span></span><span class="go">→ 3</span></li>
+      <li data-c="3a" class="a ind2"><span class="n">3a</span><span class="t"><span class="tx">In no installed package's <code>RECORD</code> (dropped there, not installed)</span></span><span class="go">→ 4</span></li>
+      <li data-c="3b" class="ind2"><span class="n">3b</span><span class="t"><span class="tx">Listed in a <code>RECORD</code></span></span><span class="go">→ 5</span></li>
+      <li data-c="4a" class="a ind3"><span class="n">4a</span><span class="t"><span class="tx">Payload signals: encoded blob → exec, network, fork/setsid, credential paths</span></span><span class="go"><span class="chip v-SUSPECT">SUSPECT</span></span></li>
+      <li data-c="4b" class="ind3"><span class="n">4b</span><span class="t"><span class="tx">Plain code</span></span><span class="go"><span class="chip v-REVIEW">REVIEW</span></span></li>
+      <li data-c="5a" class="a ind3"><span class="n">5a</span><span class="t"><span class="tx">The <code>RECORD</code> sha256 differs from the file on disk</span></span><span class="go"><span class="chip v-SUSPECT">SUSPECT</span></span></li>
+      <li data-c="5b" class="ind3"><span class="n">5b</span><span class="t"><span class="tx">Hash matches</span></span><span class="go">→ 6</span></li>
+      <li data-c="6a" class="a ind3"><span class="n">6a</span><span class="t"><span class="tx">A known pattern from its own package: setuptools shim, editable install, <code>-nspkg</code>, pywin32, coverage</span></span><span class="go"><span class="chip v-OK">OK</span></span></li>
+      <li data-c="6b" class="ind3"><span class="n">6b</span><span class="t"><span class="tx">Payload signals, or a name unrelated to its package (litellm → <code>cook.pth</code>)</span></span><span class="go"><span class="chip v-SUSPECT">SUSPECT</span></span></li>
+      <li data-c="6c" class="ind3"><span class="n">6c</span><span class="t"><span class="tx">Otherwise</span></span><span class="go"><span class="chip v-REVIEW">REVIEW</span></span></li>
+    </ol>
+    <p style="margin-top:26px">The signals are text matches; nothing is decoded or run. A known name hiding a payload (a <code>_virtualenv.py</code> that calls <code>subprocess</code>) still keys out as SUSPECT. Full rules and the IOC feed format: <a href="docs/#verdicts">docs § verdicts</a>.</p>
+  </div>
+</section>
+
+<section class="record">
+  <div class="wrap">
+    <p class="kicker">§3 · collection record</p>
+    <h2>Who put it there?</h2>
+    <div class="cols">
+      <p class="lead">Agents make venvs and <code>pip install</code> on their own, often mid-task after a <code>ModuleNotFoundError</code>. For every BAD or SUSPECT hook, tickcheck reads Claude Code, Codex, OpenCode and Gemini CLI transcripts and your shell history <em>as text</em> to find the command that installed its package.</p>
+      <p>It also reads the package's own <code>INSTALLER</code> and <code>RECORD</code> time. In the demo below, the LiteLLM proxy env was set up by a Claude Code session and the worktree hook came from a Codex <code>pip install</code>.</p>
+    </div>
+    <div class="label" id="reclabel">
+      <dl>
+        <dt>specimen</dt><dd>cook.pth · det. BAD</dd>
+        <dt>host</dt><dd>litellm 1.107.0 · uv · RECORD hash ✓</dd>
+        <dt>locality</dt><dd>~/proj/agent-proxy/.venv/lib/python3.12/site-packages</dd>
+        <dt>coll.</dt><dd>Claude Code · 2026-10-21 11:51 UTC · <code>uv add litellm[proxy]</code></dd>
+        <dt>source</dt><dd>~/.claude/projects/-home-dana-proj-agent-proxy/5b1e2c90-demo.jsonl:2</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="vials">
+  <div class="wrap">
+    <p class="kicker">§4 · into the vial</p>
+    <h2>Pull it straight out.</h2>
+    <p class="lead"><code>tickcheck pull</code> moves each BAD hook, the module its <code>.pth</code> line loads, and their <code>__pycache__</code> copies into <code>~/.tickcheck/quarantine/&lt;time&gt;/</code>, with a manifest of every original path and sha256. <code>tickcheck restore &lt;dir&gt;</code> puts them back. Python is never started, before or after.</p>
+<pre class="term" aria-label="tickcheck pull --demo output"><span class="d">$</span> tickcheck pull --demo --yes
+tickcheck pull · 5 files from 1 environment · Python was never started
+
+  ~/proj/agent-proxy/.venv
+    cook.pth  cook.py  cook.cpython-312.pyc  sitecustomize.py  sitecustomize.cpython-312.pyc
+
+<span class="o">moved</span> 5 files → ~/.tickcheck/quarantine/20261022-104512/
+<span class="d">  manifest.json lists every file and its sha256; `tickcheck restore ~/.tickcheck/quarantine/20261022-104512` puts them back</span>
+
+<span class="d">re-check:</span> 0 BAD hooks left in 7 environments.
+<span class="s">note:</span> litellm 1.107.0 (litellm-2026-10-21) is still installed in ~/proj/agent-proxy/.venv: rebuild that env, don't run its pip.
+<span class="d">Pulling stops the next run. If it ever ran with network access, rotate what this machine could read.</span></pre>
+    <p style="margin-top:22px">Pulling doesn't un-steal anything. On a BAD hit tickcheck lists the credential files of the kinds the stealer targets that <em>exist</em> on the machine. It never opens them. For rotation, <a href="https://github.com/Blackman99/keyroll">keyroll</a> finds every copy of an AI key.</p>
+  </div>
+</section>
+
+<section class="habitat">
+  <div class="wrap">
+    <p class="kicker">§5 · localities searched</p>
+    <h2>Every environment, not just the one you remember.</h2>
+    <ul>
+      <li><b>Project venvs</b><span>any folder with pyvenv.cfg under ~, including .venv inside agent worktrees (.claude/worktrees, .codex)</span></li>
+      <li><b>Tool envs</b><span>pipx venvs, uv tools, uvx environments in the uv cache, pre-commit envs</span></li>
+      <li><b>Interpreters</b><span>pyenv versions, uv-managed Pythons, conda / mamba / miniforge envs</span></li>
+      <li><b>User site and system</b><span>~/.local, /usr/lib/python3.X (Debian's sitecustomize), /usr/local, Homebrew, Python.org framework, C:\Python3X, AppData</span></li>
+      <li><b>Package caches</b><span>uv, pip and poetry caches holding a poisoned dist or wheel, one <code>uv sync</code> away from an env</span></li>
+      <li><b>The host</b><span>/tmp markers (.pc_once_*, remote_code_loader.lock) and, on Linux, any process holding the lock (read from /proc; nothing is killed)</span></li>
+      <li><b>Containers and CI</b><span><code>docker export</code> a container, untar it, <code>tickcheck --root rootfs</code>. In CI, the exit code (4 BAD, 3 SUSPECT) fails the job.</span></li>
+      <li><b>Your own feed</b><span><code>--ioc incident.json</code> adds hashes, dists and host markers for the next incident</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="yours">
+  <div class="wrap">
+    <p class="kicker">§6 · your own drawer</p>
+    <h2>Pin your machine's specimens.</h2>
+    <p class="lead">Run <code>tickcheck --json &gt; drawer.json</code> and drop the file here. It's drawn in this tab only; nothing is uploaded.</p>
+    <label class="drop" id="drop" tabindex="0"><strong>Drop drawer.json</strong>or click to choose a file<input type="file" id="file" accept=".json,application/json" hidden></label>
+    <p id="droperr" class="err" role="status"></p>
+  </div>
+</section>
+
+<section class="install">
+  <div class="wrap">
+    <p class="kicker">§7 · install</p>
+    <h2>One binary. Read it before you pipe it.</h2>
+<pre class="term"><span class="d"># Linux / macOS: downloads the release for this machine and checks it against checksums.txt</span>
+curl -fsSL https://blackman99.github.io/tickcheck/install.sh | sh
+<span class="d"># or, with Go</span>
+go install github.com/Blackman99/tickcheck/cmd/tickcheck@latest
+<span class="d"># Windows: tickcheck_windows_amd64.zip from the releases page</span>
+
+tickcheck --demo        <span class="d"># a generated home with a defanged LiteLLM drop</span>
+tickcheck               <span class="d"># your machine; exit 4 = BAD, 3 = SUSPECT</span>
+tickcheck --root /srv   <span class="d"># one folder, a CI workspace, an unpacked container</span></pre>
+    <p style="margin-top:20px"><a href="https://github.com/Blackman99/tickcheck/releases">Releases</a> · <a href="docs/">Docs</a> · <a href="docs/#faq">FAQ</a> · MIT</p>
+  </div>
+</section>
+</main>
+<footer><div class="wrap"><span>tickcheck · reads files, starts nothing</span><span>Specimen drawer drawn from <code>tickcheck --demo</code>. Demo files are inert stand-ins, except the 12-byte cook.pth.</span></div></footer>
+<script src="app.js" defer></script>
+</body>
+</html>

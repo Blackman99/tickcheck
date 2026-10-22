@@ -96,6 +96,9 @@ func Run(o Options) (*Report, error) {
 		if len(e.BadDists) > 0 {
 			e.Verdict = Bad
 		}
+		if e.Hooks == nil {
+			e.Hooks = []Hook{} // "hooks": [] in JSON, not null
+		}
 		r.Envs = append(r.Envs, *e)
 	}
 	r.Caches = scanCaches(home, feed, roots)
