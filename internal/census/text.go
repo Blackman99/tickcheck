@@ -106,7 +106,13 @@ func Render(w io.Writer, r *Report, st Style, all bool) {
 			if n > 0 {
 				desc = fmt.Sprintf("%d known hook%s", n, plural(n))
 			}
-			p("%s %s %s\n", st.OK(pad("OK", 8)), pad(Tilde(e.Root, r.Home), 52), st.Dim(kindPy(e)+" · "+desc))
+			root := Tilde(e.Root, r.Home)
+			if len([]rune(root)) > 52 {
+				// a long root gets its own line so the kind column stays aligned
+				p("%s %s\n%s %s\n", st.OK(pad("OK", 8)), root, pad("", 8+1+52), st.Dim(kindPy(e)+" · "+desc))
+			} else {
+				p("%s %s %s\n", st.OK(pad("OK", 8)), pad(root, 52), st.Dim(kindPy(e)+" · "+desc))
+			}
 		}
 		if len(show) < len(quiet) {
 			p("%s %s\n", pad("", 8), st.Dim(fmt.Sprintf("+%d more clean environments (--all lists them)", len(quiet)-len(show))))
@@ -177,7 +183,11 @@ func tildeAll(ps []string, home string) []string {
 
 func renderEnv(w io.Writer, r *Report, e Env, st Style, all bool) {
 	p := func(f string, a ...any) { fmt.Fprintf(w, f, a...) }
-	p("%s %s %s\n", st.V(e.Verdict, pad(e.Verdict.String(), 8)), st.Bold(pad(Tilde(e.Root, r.Home), 52)), st.Dim(kindPy(e)))
+	if root := Tilde(e.Root, r.Home); len([]rune(root)) > 52 {
+		p("%s %s\n%s %s\n", st.V(e.Verdict, pad(e.Verdict.String(), 8)), st.Bold(root), pad("", 8+1+52), st.Dim(kindPy(e)))
+	} else {
+		p("%s %s %s\n", st.V(e.Verdict, pad(e.Verdict.String(), 8)), st.Bold(pad(root, 52)), st.Dim(kindPy(e)))
+	}
 	for _, d := range e.BadDists {
 		p("%s %s %s\n", pad("", 8), st.Bad("installed:"), d)
 	}
@@ -340,7 +350,11 @@ func renderNext(w io.Writer, r *Report, st Style) {
 	case worst == Review:
 		p("%s %s\n", st.OK("Nothing matches a known compromise."), st.Dim("REVIEW = runs at startup and tickcheck can't vouch for it; read it with less, not python."))
 	default:
-		p("%s %s\n", st.OK("Every startup hook is a known pattern from its own package."), st.Dim("Re-run after the next install an agent makes."))
+		if r.Counts.Hooks == 0 {
+			p("%s %s\n", st.OK(fmt.Sprintf("No startup hooks in %d environment%s.", r.Counts.Envs, plural(r.Counts.Envs))), st.Dim("Re-run after the next install an agent makes."))
+		} else {
+			p("%s %s\n", st.OK("Every startup hook is a known pattern from its own package."), st.Dim("Re-run after the next install an agent makes."))
+		}
 	}
 }
 
