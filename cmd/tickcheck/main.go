@@ -185,7 +185,9 @@ func run(args []string, out, errw io.Writer, in *os.File) int {
 		fmt.Fprintln(errw, "tickcheck:", err)
 		return exitUsage
 	}
-	if !c.demo {
+	if c.demo {
+		r.ScopeArgs = " --demo"
+	} else {
 		r.ScopeArgs = scopeArgs(&c)
 	}
 	if sub == "pull" {
@@ -221,7 +223,11 @@ func pull(c cli, opts census.Options, r *census.Report, out, errw io.Writer, in 
 		}
 		p("Nothing to pull: no %s startup hooks in %d environments.\n", what, r.Counts.Envs)
 		if !c.suspect && r.Counts.Suspect > 0 {
-			p("%s %d SUSPECT hook%s: %s\n", st.Dim("There are"), r.Counts.Suspect, plural(r.Counts.Suspect), st.Code("tickcheck pull --suspect"+r.ScopeArgs))
+			verb := "There are"
+			if r.Counts.Suspect == 1 {
+				verb = "There is"
+			}
+			p("%s %d SUSPECT hook%s: %s\n", st.Dim(verb), r.Counts.Suspect, plural(r.Counts.Suspect), st.Code("tickcheck pull --suspect"+r.ScopeArgs))
 		}
 		return exitOK
 	}
@@ -237,7 +243,7 @@ func pull(c cli, opts census.Options, r *census.Report, out, errw io.Writer, in 
 	if qdir == "" {
 		qdir = filepath.Join(r.Home, ".tickcheck", "quarantine")
 	}
-	p("%s %s %d file%s from %d environment%s %s Python was never started\n\n", st.Bold("tickcheck pull"), st.Dim("·"), len(items), plural(len(items)), len(order), plural(len(order)), st.Dim("·"))
+	p("%s %s %s from %d environment%s %s Python was never started\n\n", st.Bold("tickcheck pull"), st.Dim("·"), census.DescribeItems(items), len(order), plural(len(order)), st.Dim("·"))
 	for _, e := range order {
 		p("  %s\n    %s\n", census.Tilde(e, r.Home), strings.Join(envs[e], "  "))
 	}
@@ -260,7 +266,7 @@ func pull(c cli, opts census.Options, r *census.Report, out, errw io.Writer, in 
 	}
 	dest, err := census.Pull(items, qdir, version)
 	if dest != "" {
-		p("%s %d file%s → %s\n", st.OK("moved"), len(items), plural(len(items)), census.Tilde(dest, r.Home)+string(filepath.Separator))
+		p("%s %s → %s\n", st.OK("moved"), census.DescribeItems(items), census.Tilde(dest, r.Home)+string(filepath.Separator))
 		p("%s\n", st.Dim("  manifest.json lists every file and its sha256; `tickcheck restore "+census.Tilde(dest, r.Home)+"` puts them back"))
 	}
 	if err != nil {
@@ -284,7 +290,7 @@ func pull(c cli, opts census.Options, r *census.Report, out, errw io.Writer, in 
 			}
 		}
 		if r.Worst() == census.Bad {
-			p("%s\n", st.Dim("Pulling stops the next run. If it ever ran with network access, rotate what this machine could read."))
+			p("%s\n", st.Dim("The next Python start won't run them. If they ever ran with network access, rotate what this machine could read."))
 		}
 	}
 	return exitOK

@@ -1,236 +1,539 @@
 {
- "envs": [
-  {
-   "root": "~/proj/agent-proxy/.venv",
-   "kind": "venv",
-   "python": "3.12",
-   "verdict": "BAD",
-   "hooks": [
+  "version": "0.1.0",
+  "scanned_at": "2026-10-22T10:45:39.000060007+08:00",
+  "took": "5ms",
+  "home": "/tmp/tickcheck-demo/home/dana",
+  "roots": [
+    "/tmp/tickcheck-demo/home/dana"
+  ],
+  "demo": true,
+  "envs": [
     {
-     "name": "_virtualenv.pth",
-     "verdict": "OK",
-     "owner": "",
-     "reasons": [
-      "virtualenv / uv venv patch"
-     ],
-     "line": "import _virtualenv",
-     "known": "virtualenv / uv venv patch",
-     "by": []
+      "root": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv",
+      "kind": "venv",
+      "python": "3.12",
+      "site_dirs": [
+        "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages"
+      ],
+      "hooks": [
+        {
+          "kind": "pth",
+          "file": {
+            "path": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/_virtualenv.pth",
+            "rel": "_virtualenv.pth",
+            "size": 19,
+            "sha256": "a18ec686bd69842888e68e43eade6c26cac183a1e4c98c40ae8992349f0a1a1c"
+          },
+          "exec_lines": [
+            "import _virtualenv"
+          ],
+          "loads": [
+            {
+              "path": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/_virtualenv.py",
+              "rel": "_virtualenv.py",
+              "size": 140,
+              "sha256": "7cc6663457b75193ba7983cdec77133e851f10207d237636eceabd869dd0a62e"
+            }
+          ],
+          "verdict": "OK",
+          "reasons": [
+            "virtualenv / uv venv patch"
+          ],
+          "known_as": "virtualenv / uv venv patch"
+        },
+        {
+          "kind": "pth",
+          "file": {
+            "path": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/cook.pth",
+            "rel": "cook.pth",
+            "size": 12,
+            "sha256": "7f191632e7320705d154b85204f1ae546b543acbd7e8861229b76f5042b92bdb",
+            "owner": {
+              "name": "litellm",
+              "version": "1.107.0",
+              "installer": "uv",
+              "installed_at": "2026-10-21T19:52:07+08:00",
+              "dist_info": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/litellm-1.107.0.dist-info",
+              "record_sha256": "7f191632e7320705d154b85204f1ae546b543acbd7e8861229b76f5042b92bdb",
+              "record_hash_ok": true
+            },
+            "ioc": "litellm-2026-10-21"
+          },
+          "exec_lines": [
+            "import cook"
+          ],
+          "loads": [
+            {
+              "path": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/cook.py",
+              "rel": "cook.py",
+              "size": 2578,
+              "sha256": "5450c401584452a86a0c0336190c049c534f25930f42523e9c47600cc309aa97",
+              "owner": {
+                "name": "litellm",
+                "version": "1.107.0",
+                "installer": "uv",
+                "installed_at": "2026-10-21T19:52:07+08:00",
+                "dist_info": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/litellm-1.107.0.dist-info",
+                "record_sha256": "5450c401584452a86a0c0336190c049c534f25930f42523e9c47600cc309aa97",
+                "record_hash_ok": true
+              },
+              "signals": [
+                "encoded blob → exec",
+                "long encoded literal",
+                "detaches (fork/setsid)"
+              ],
+              "ioc": "litellm-2026-10-21"
+            }
+          ],
+          "residue": [
+            "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/__pycache__/cook.cpython-312.pyc"
+          ],
+          "verdict": "BAD",
+          "reasons": [
+            "cook.pth is byte-identical to cook.pth (import cook) in litellm-2026-10-21",
+            "litellm 1.107.0 is listed in litellm-2026-10-21 (it installed cook.pth, cook.py)",
+            "cook.py: encoded blob → exec, long encoded literal, detaches (fork/setsid)"
+          ],
+          "installed_by": [
+            {
+              "harness": "Claude Code",
+              "file": "/tmp/tickcheck-demo/home/dana/.claude/projects/-home-dana-proj-agent-proxy/5b1e2c90-demo.jsonl",
+              "line": 2,
+              "when": "2026-10-21T11:51:40Z",
+              "cwd": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy",
+              "command": "uv add litellm[proxy]"
+            }
+          ]
+        },
+        {
+          "kind": "pth",
+          "file": {
+            "path": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/distutils-precedence.pth",
+            "rel": "distutils-precedence.pth",
+            "size": 151,
+            "sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
+            "owner": {
+              "name": "setuptools",
+              "version": "80.9.0",
+              "installer": "uv",
+              "installed_at": "2026-10-21T18:52:07+08:00",
+              "dist_info": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/setuptools-80.9.0.dist-info",
+              "record_sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
+              "record_hash_ok": true
+            }
+          },
+          "exec_lines": [
+            "import os; var = 'SETUPTOOLS_USE_DISTUTILS'; enabled = os.environ.get(var, 'local') == 'local'; enabled and __import__('_distutils_hack').add_shim(); "
+          ],
+          "loads": [
+            {
+              "path": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/_distutils_hack/__init__.py",
+              "rel": "_distutils_hack/__init__.py",
+              "size": 7,
+              "sha256": "3a0222f14ae9564f060105670e6cf8f78b0357f11ce9c7df577b67fd095acbb2",
+              "owner": {
+                "name": "setuptools",
+                "version": "80.9.0",
+                "installer": "uv",
+                "installed_at": "2026-10-21T18:52:07+08:00",
+                "dist_info": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/setuptools-80.9.0.dist-info",
+                "record_sha256": "3a0222f14ae9564f060105670e6cf8f78b0357f11ce9c7df577b67fd095acbb2",
+                "record_hash_ok": true
+              }
+            }
+          ],
+          "verdict": "OK",
+          "reasons": [
+            "setuptools distutils shim"
+          ],
+          "known_as": "setuptools distutils shim"
+        },
+        {
+          "kind": "sitecustomize",
+          "file": {
+            "path": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/sitecustomize.py",
+            "rel": "sitecustomize.py",
+            "size": 338,
+            "sha256": "0b3c49bf3428527001388494edb5a2ad0733683abe767b57a467557b8162dee0",
+            "owner": {
+              "name": "litellm",
+              "version": "1.107.0",
+              "installer": "uv",
+              "installed_at": "2026-10-21T19:52:07+08:00",
+              "dist_info": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/litellm-1.107.0.dist-info",
+              "record_sha256": "0b3c49bf3428527001388494edb5a2ad0733683abe767b57a467557b8162dee0",
+              "record_hash_ok": true
+            },
+            "signals": [
+              "network",
+              "detaches (fork/setsid)"
+            ],
+            "ioc": "litellm-2026-10-21"
+          },
+          "residue": [
+            "/tmp/tickcheck-demo/home/dana/proj/agent-proxy/.venv/lib/python3.12/site-packages/__pycache__/sitecustomize.cpython-312.pyc"
+          ],
+          "verdict": "BAD",
+          "reasons": [
+            "litellm 1.107.0 is listed in litellm-2026-10-21 (it installed sitecustomize.py)",
+            "sitecustomize.py: network, detaches (fork/setsid)"
+          ],
+          "installed_by": [
+            {
+              "harness": "Claude Code",
+              "file": "/tmp/tickcheck-demo/home/dana/.claude/projects/-home-dana-proj-agent-proxy/5b1e2c90-demo.jsonl",
+              "line": 2,
+              "when": "2026-10-21T11:51:40Z",
+              "cwd": "/tmp/tickcheck-demo/home/dana/proj/agent-proxy",
+              "command": "uv add litellm[proxy]"
+            }
+          ]
+        }
+      ],
+      "bad_dists": [
+        "litellm 1.107.0 (litellm-2026-10-21)"
+      ],
+      "verdict": "BAD"
     },
     {
-     "name": "cook.pth",
-     "verdict": "BAD",
-     "owner": "litellm 1.107.0",
-     "reasons": [
-      "cook.pth is byte-identical to cook.pth (import cook) in litellm-2026-10-21",
-      "litellm 1.107.0 is listed in litellm-2026-10-21 (it installed cook.pth, cook.py)",
-      "cook.py: encoded blob \u2192 exec, long encoded literal, detaches (fork/setsid)"
-     ],
-     "line": "import cook",
-     "known": "",
-     "by": [
-      {
-       "harness": "Claude Code",
-       "when": "2026-10-21T11:51:40Z",
-       "cwd": "~/proj/agent-proxy",
-       "cmd": "uv add litellm[proxy]",
-       "file": "~/.claude/projects/-home-dana-proj-agent-proxy/5b1e2c90-demo.jsonl:2"
-      }
-     ]
+      "root": "/tmp/tickcheck-demo/home/dana/work/scraper/.claude/worktrees/agent-7c1e/.venv",
+      "kind": "venv · agent worktree",
+      "python": "3.12",
+      "site_dirs": [
+        "/tmp/tickcheck-demo/home/dana/work/scraper/.claude/worktrees/agent-7c1e/.venv/lib/python3.12/site-packages"
+      ],
+      "hooks": [
+        {
+          "kind": "pth",
+          "file": {
+            "path": "/tmp/tickcheck-demo/home/dana/work/scraper/.claude/worktrees/agent-7c1e/.venv/lib/python3.12/site-packages/_virtualenv.pth",
+            "rel": "_virtualenv.pth",
+            "size": 19,
+            "sha256": "a18ec686bd69842888e68e43eade6c26cac183a1e4c98c40ae8992349f0a1a1c"
+          },
+          "exec_lines": [
+            "import _virtualenv"
+          ],
+          "loads": [
+            {
+              "path": "/tmp/tickcheck-demo/home/dana/work/scraper/.claude/worktrees/agent-7c1e/.venv/lib/python3.12/site-packages/_virtualenv.py",
+              "rel": "_virtualenv.py",
+              "size": 140,
+              "sha256": "7cc6663457b75193ba7983cdec77133e851f10207d237636eceabd869dd0a62e"
+            }
+          ],
+          "verdict": "OK",
+          "reasons": [
+            "virtualenv / uv venv patch"
+          ],
+          "known_as": "virtualenv / uv venv patch"
+        },
+        {
+          "kind": "pth",
+          "file": {
+            "path": "/tmp/tickcheck-demo/home/dana/work/scraper/.claude/worktrees/agent-7c1e/.venv/lib/python3.12/site-packages/fastjsonx_rt.pth",
+            "rel": "fastjsonx_rt.pth",
+            "size": 41,
+            "sha256": "5d9fee2fec795e10cfd5f415b4972599b2badafa76d75b05408e3ee0dff49ec8",
+            "owner": {
+              "name": "fastjsonx",
+              "version": "0.4.1",
+              "installer": "pip",
+              "installed_at": "2026-10-20T17:52:07+08:00",
+              "dist_info": "/tmp/tickcheck-demo/home/dana/work/scraper/.claude/worktrees/agent-7c1e/.venv/lib/python3.12/site-packages/fastjsonx-0.4.1.dist-info",
+              "record_sha256": "5d9fee2fec795e10cfd5f415b4972599b2badafa76d75b05408e3ee0dff49ec8",
+              "record_hash_ok": true
+            }
+          },
+          "exec_lines": [
+            "import fastjsonx_rt; fastjsonx_rt.boot()"
+          ],
+          "loads": [
+            {
+              "path": "/tmp/tickcheck-demo/home/dana/work/scraper/.claude/worktrees/agent-7c1e/.venv/lib/python3.12/site-packages/fastjsonx_rt.py",
+              "rel": "fastjsonx_rt.py",
+              "size": 308,
+              "sha256": "736f9cd0c2718877961eaf88e362f062cbfb311ee4c2606cce9a00cc56125dd9",
+              "owner": {
+                "name": "fastjsonx",
+                "version": "0.4.1",
+                "installer": "pip",
+                "installed_at": "2026-10-20T17:52:07+08:00",
+                "dist_info": "/tmp/tickcheck-demo/home/dana/work/scraper/.claude/worktrees/agent-7c1e/.venv/lib/python3.12/site-packages/fastjsonx-0.4.1.dist-info",
+                "record_sha256": "736f9cd0c2718877961eaf88e362f062cbfb311ee4c2606cce9a00cc56125dd9",
+                "record_hash_ok": true
+              },
+              "signals": [
+                "network",
+                "reads credentials"
+              ]
+            }
+          ],
+          "verdict": "SUSPECT",
+          "reasons": [
+            "fastjsonx_rt.py: network, reads credentials"
+          ],
+          "installed_by": [
+            {
+              "harness": "Codex",
+              "file": "/tmp/tickcheck-demo/home/dana/.codex/sessions/2026/10/20/rollout-2026-10-20T09-31-12-demo.jsonl",
+              "line": 1,
+              "when": "2026-10-20T09:33:02Z",
+              "cwd": "/tmp/tickcheck-demo/home/dana/work/scraper/.claude/worktrees/agent-7c1e",
+              "command": "pip install fastjsonx"
+            }
+          ]
+        }
+      ],
+      "verdict": "SUSPECT"
     },
     {
-     "name": "distutils-precedence.pth",
-     "verdict": "OK",
-     "owner": "setuptools 80.9.0",
-     "reasons": [
-      "setuptools distutils shim"
-     ],
-     "line": "import os; var = 'SETUPTOOLS_USE_DISTUTILS'; enabled = os.environ.get(var, 'local') == 'local'; enabled and __import__('_distutils_hack').add_shim(); ",
-     "known": "setuptools distutils shim",
-     "by": []
+      "root": "/tmp/tickcheck-demo/home/dana/.local/lib/python3.12/site-packages",
+      "kind": "user site",
+      "python": "3.12",
+      "site_dirs": [
+        "/tmp/tickcheck-demo/home/dana/.local/lib/python3.12/site-packages"
+      ],
+      "hooks": [
+        {
+          "kind": "usercustomize",
+          "file": {
+            "path": "/tmp/tickcheck-demo/home/dana/.local/lib/python3.12/site-packages/usercustomize.py",
+            "rel": "usercustomize.py",
+            "size": 79,
+            "sha256": "1d65bcd0cb4e86c47cf015908cc65c232d98bed54d146990609acd2e58cbde66"
+          },
+          "verdict": "REVIEW",
+          "reasons": [
+            "usercustomize.py is not in any installed package's RECORD"
+          ]
+        }
+      ],
+      "verdict": "REVIEW"
     },
     {
-     "name": "sitecustomize.py",
-     "verdict": "BAD",
-     "owner": "litellm 1.107.0",
-     "reasons": [
-      "litellm 1.107.0 is listed in litellm-2026-10-21 (it installed sitecustomize.py)",
-      "sitecustomize.py: network, detaches (fork/setsid)"
-     ],
-     "line": "",
-     "known": "",
-     "by": [
-      {
-       "harness": "Claude Code",
-       "when": "2026-10-21T11:51:40Z",
-       "cwd": "~/proj/agent-proxy",
-       "cmd": "uv add litellm[proxy]",
-       "file": "~/.claude/projects/-home-dana-proj-agent-proxy/5b1e2c90-demo.jsonl:2"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "root": "~/work/scraper/.claude/worktrees/agent-7c1e/.venv",
-   "kind": "venv \u00b7 agent worktree",
-   "python": "3.12",
-   "verdict": "SUSPECT",
-   "hooks": [
-    {
-     "name": "_virtualenv.pth",
-     "verdict": "OK",
-     "owner": "",
-     "reasons": [
-      "virtualenv / uv venv patch"
-     ],
-     "line": "import _virtualenv",
-     "known": "virtualenv / uv venv patch",
-     "by": []
+      "root": "/tmp/tickcheck-demo/home/dana/miniforge3/envs/rag",
+      "kind": "conda",
+      "python": "3.11",
+      "site_dirs": [
+        "/tmp/tickcheck-demo/home/dana/miniforge3/envs/rag/lib/python3.11/site-packages"
+      ],
+      "hooks": [
+        {
+          "kind": "pth",
+          "file": {
+            "path": "/tmp/tickcheck-demo/home/dana/miniforge3/envs/rag/lib/python3.11/site-packages/aaa_profiler.pth",
+            "rel": "aaa_profiler.pth",
+            "size": 21,
+            "sha256": "d625d95beed0adcb05ddb173801439318d1c28a1d29f3a5744b5f57179733f46"
+          },
+          "exec_lines": [
+            "import profiler_boot"
+          ],
+          "loads": [
+            {
+              "path": "/tmp/tickcheck-demo/home/dana/miniforge3/envs/rag/lib/python3.11/site-packages/profiler_boot.py",
+              "rel": "profiler_boot.py",
+              "size": 111,
+              "sha256": "e90eae3772bce717b81f759461a10b9056325aaf157fcea25ee6411b603ce787"
+            }
+          ],
+          "verdict": "REVIEW",
+          "reasons": [
+            "aaa_profiler.pth and profiler_boot.py are not in any installed package's RECORD"
+          ]
+        },
+        {
+          "kind": "pth",
+          "file": {
+            "path": "/tmp/tickcheck-demo/home/dana/miniforge3/envs/rag/lib/python3.11/site-packages/zope.interface-7.1.0-py3.11-nspkg.pth",
+            "rel": "zope.interface-7.1.0-py3.11-nspkg.pth",
+            "size": 125,
+            "sha256": "f48743c77d2aadbbf1ce22b5798967615add4e38bc35b2e19fefbe9bfb9133ea",
+            "owner": {
+              "name": "zope.interface",
+              "version": "7.1.0",
+              "installer": "conda",
+              "installed_at": "2026-09-30T23:52:07+08:00",
+              "dist_info": "/tmp/tickcheck-demo/home/dana/miniforge3/envs/rag/lib/python3.11/site-packages/zope.interface-7.1.0.dist-info",
+              "record_sha256": "f48743c77d2aadbbf1ce22b5798967615add4e38bc35b2e19fefbe9bfb9133ea",
+              "record_hash_ok": true
+            }
+          },
+          "exec_lines": [
+            "import sys, types, os;has_mfs = sys.version_info \u003e (3, 5);p = os.path.join(sys._getframe(1).f_locals['sitedir'], *('zope',))"
+          ],
+          "verdict": "OK",
+          "reasons": [
+            "namespace package (-nspkg)"
+          ],
+          "known_as": "namespace package (-nspkg)"
+        }
+      ],
+      "verdict": "REVIEW"
     },
     {
-     "name": "fastjsonx_rt.pth",
-     "verdict": "SUSPECT",
-     "owner": "fastjsonx 0.4.1",
-     "reasons": [
-      "fastjsonx_rt.py: network, reads credentials"
-     ],
-     "line": "import fastjsonx_rt; fastjsonx_rt.boot()",
-     "known": "",
-     "by": [
-      {
-       "harness": "Codex",
-       "when": "2026-10-20T09:33:02Z",
-       "cwd": "~/work/scraper/.claude/worktrees/agent-7c1e",
-       "cmd": "pip install fastjsonx",
-       "file": "~/.codex/sessions/2026/10/20/rollout-2026-10-20T09-31-12-demo.jsonl:1"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "root": "~/.local/lib/python3.12/site-packages",
-   "kind": "user site",
-   "python": "3.12",
-   "verdict": "REVIEW",
-   "hooks": [
-    {
-     "name": "usercustomize.py",
-     "verdict": "REVIEW",
-     "owner": "",
-     "reasons": [
-      "usercustomize.py is not in any installed package's RECORD"
-     ],
-     "line": "",
-     "known": "",
-     "by": []
-    }
-   ]
-  },
-  {
-   "root": "~/miniforge3/envs/rag",
-   "kind": "conda",
-   "python": "3.11",
-   "verdict": "REVIEW",
-   "hooks": [
-    {
-     "name": "aaa_profiler.pth",
-     "verdict": "REVIEW",
-     "owner": "",
-     "reasons": [
-      "aaa_profiler.pth and profiler_boot.py are not in any installed package's RECORD"
-     ],
-     "line": "import profiler_boot",
-     "known": "",
-     "by": []
+      "root": "/tmp/tickcheck-demo/home/dana/.local/pipx/venvs/httpie",
+      "kind": "pipx",
+      "python": "3.12",
+      "site_dirs": [
+        "/tmp/tickcheck-demo/home/dana/.local/pipx/venvs/httpie/lib/python3.12/site-packages"
+      ],
+      "hooks": [],
+      "verdict": "OK"
     },
     {
-     "name": "zope.interface-7.1.0-py3.11-nspkg.pth",
-     "verdict": "OK",
-     "owner": "zope.interface 7.1.0",
-     "reasons": [
-      "namespace package (-nspkg)"
-     ],
-     "line": "import sys, types, os;has_mfs = sys.version_info > (3, 5);p = os.path.join(sys._getframe(1).f_locals['sitedir'], *('zope',))",
-     "known": "namespace package (-nspkg)",
-     "by": []
-    }
-   ]
-  },
-  {
-   "root": "~/.local/pipx/venvs/httpie",
-   "kind": "pipx",
-   "python": "3.12",
-   "verdict": "OK",
-   "hooks": []
-  },
-  {
-   "root": "~/.local/share/uv/tools/llm",
-   "kind": "uv tool",
-   "python": "3.12",
-   "verdict": "OK",
-   "hooks": [
-    {
-     "name": "_virtualenv.pth",
-     "verdict": "OK",
-     "owner": "",
-     "reasons": [
-      "virtualenv / uv venv patch"
-     ],
-     "line": "import _virtualenv",
-     "known": "virtualenv / uv venv patch",
-     "by": []
-    }
-   ]
-  },
-  {
-   "root": "~/.pyenv/versions/3.11.9",
-   "kind": "pyenv",
-   "python": "3.11",
-   "verdict": "OK",
-   "hooks": [
-    {
-     "name": "__editable__.mytool-0.3.0.pth",
-     "verdict": "OK",
-     "owner": "mytool 0.3.0",
-     "reasons": [
-      "editable install (PEP 660)"
-     ],
-     "line": "import __editable___mytool_0_3_0_finder; __editable___mytool_0_3_0_finder.install()",
-     "known": "editable install (PEP 660)",
-     "by": []
+      "root": "/tmp/tickcheck-demo/home/dana/.local/share/uv/tools/llm",
+      "kind": "uv tool",
+      "python": "3.12",
+      "site_dirs": [
+        "/tmp/tickcheck-demo/home/dana/.local/share/uv/tools/llm/lib/python3.12/site-packages"
+      ],
+      "hooks": [
+        {
+          "kind": "pth",
+          "file": {
+            "path": "/tmp/tickcheck-demo/home/dana/.local/share/uv/tools/llm/lib/python3.12/site-packages/_virtualenv.pth",
+            "rel": "_virtualenv.pth",
+            "size": 19,
+            "sha256": "a18ec686bd69842888e68e43eade6c26cac183a1e4c98c40ae8992349f0a1a1c"
+          },
+          "exec_lines": [
+            "import _virtualenv"
+          ],
+          "loads": [
+            {
+              "path": "/tmp/tickcheck-demo/home/dana/.local/share/uv/tools/llm/lib/python3.12/site-packages/_virtualenv.py",
+              "rel": "_virtualenv.py",
+              "size": 140,
+              "sha256": "7cc6663457b75193ba7983cdec77133e851f10207d237636eceabd869dd0a62e"
+            }
+          ],
+          "verdict": "OK",
+          "reasons": [
+            "virtualenv / uv venv patch"
+          ],
+          "known_as": "virtualenv / uv venv patch"
+        }
+      ],
+      "verdict": "OK"
     },
     {
-     "name": "distutils-precedence.pth",
-     "verdict": "OK",
-     "owner": "setuptools 75.1.0",
-     "reasons": [
-      "setuptools distutils shim"
-     ],
-     "line": "import os; var = 'SETUPTOOLS_USE_DISTUTILS'; enabled = os.environ.get(var, 'local') == 'local'; enabled and __import__('_distutils_hack').add_shim(); ",
-     "known": "setuptools distutils shim",
-     "by": []
+      "root": "/tmp/tickcheck-demo/home/dana/.pyenv/versions/3.11.9",
+      "kind": "pyenv",
+      "python": "3.11",
+      "site_dirs": [
+        "/tmp/tickcheck-demo/home/dana/.pyenv/versions/3.11.9/lib/python3.11/site-packages"
+      ],
+      "hooks": [
+        {
+          "kind": "pth",
+          "file": {
+            "path": "/tmp/tickcheck-demo/home/dana/.pyenv/versions/3.11.9/lib/python3.11/site-packages/__editable__.mytool-0.3.0.pth",
+            "rel": "__editable__.mytool-0.3.0.pth",
+            "size": 84,
+            "sha256": "0909a304d31a80844f95b9a95e87573ef45e5f2b620d7c7862861f940ffaa0db",
+            "owner": {
+              "name": "mytool",
+              "version": "0.3.0",
+              "installer": "pip",
+              "installed_at": "2026-10-09T07:52:07+08:00",
+              "dist_info": "/tmp/tickcheck-demo/home/dana/.pyenv/versions/3.11.9/lib/python3.11/site-packages/mytool-0.3.0.dist-info",
+              "record_sha256": "0909a304d31a80844f95b9a95e87573ef45e5f2b620d7c7862861f940ffaa0db",
+              "record_hash_ok": true
+            }
+          },
+          "exec_lines": [
+            "import __editable___mytool_0_3_0_finder; __editable___mytool_0_3_0_finder.install()"
+          ],
+          "loads": [
+            {
+              "path": "/tmp/tickcheck-demo/home/dana/.pyenv/versions/3.11.9/lib/python3.11/site-packages/__editable___mytool_0_3_0_finder.py",
+              "rel": "__editable___mytool_0_3_0_finder.py",
+              "size": 18,
+              "sha256": "44d7c73d18cd26213154727ab2ffcd477678cf024cda41aefa57fc03fb446f99",
+              "owner": {
+                "name": "mytool",
+                "version": "0.3.0",
+                "installer": "pip",
+                "installed_at": "2026-10-09T07:52:07+08:00",
+                "dist_info": "/tmp/tickcheck-demo/home/dana/.pyenv/versions/3.11.9/lib/python3.11/site-packages/mytool-0.3.0.dist-info",
+                "record_sha256": "44d7c73d18cd26213154727ab2ffcd477678cf024cda41aefa57fc03fb446f99",
+                "record_hash_ok": true
+              }
+            }
+          ],
+          "verdict": "OK",
+          "reasons": [
+            "editable install (PEP 660)"
+          ],
+          "known_as": "editable install (PEP 660)"
+        },
+        {
+          "kind": "pth",
+          "file": {
+            "path": "/tmp/tickcheck-demo/home/dana/.pyenv/versions/3.11.9/lib/python3.11/site-packages/distutils-precedence.pth",
+            "rel": "distutils-precedence.pth",
+            "size": 151,
+            "sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
+            "owner": {
+              "name": "setuptools",
+              "version": "75.1.0",
+              "installer": "pip",
+              "installed_at": "2026-09-14T07:52:07+08:00",
+              "dist_info": "/tmp/tickcheck-demo/home/dana/.pyenv/versions/3.11.9/lib/python3.11/site-packages/setuptools-75.1.0.dist-info",
+              "record_sha256": "2638ce9e2500e572a5e0de7faed6661eb569d1b696fcba07b0dd223da5f5d224",
+              "record_hash_ok": true
+            }
+          },
+          "exec_lines": [
+            "import os; var = 'SETUPTOOLS_USE_DISTUTILS'; enabled = os.environ.get(var, 'local') == 'local'; enabled and __import__('_distutils_hack').add_shim(); "
+          ],
+          "verdict": "OK",
+          "reasons": [
+            "setuptools distutils shim"
+          ],
+          "known_as": "setuptools distutils shim"
+        }
+      ],
+      "verdict": "OK"
     }
-   ]
-  }
- ],
- "counts": {
-  "envs": 7,
-  "hooks": 12,
-  "bad": 2,
-  "suspect": 1,
-  "review": 2,
-  "ok": 7
- },
- "caches": [
-  "~/.cache/uv/archive-v0/Xq3tVb1/litellm-1.107.0.dist-info"
- ],
- "exposed": [
-  "~/.aws/credentials",
-  "~/.claude/.credentials.json",
-  "~/.codex/auth.json",
-  "~/.config/gh/hosts.yml",
-  "~/.ssh/id_ed25519"
- ]
+  ],
+  "caches": [
+    {
+      "path": "/tmp/tickcheck-demo/home/dana/.cache/uv/archive-v0/Xq3tVb1/litellm-1.107.0.dist-info",
+      "tool": "uv",
+      "ioc": "litellm-2026-10-21",
+      "detail": "litellm 1.107.0 unpacked in the uv cache"
+    }
+  ],
+  "host": [
+    {
+      "what": "exfil marker (written only after a successful upload)",
+      "path": "/tmp/tickcheck-demo/tmp/.pc_once_72129118c59f5636c0bb",
+      "ioc": "litellm-2026-10-21"
+    },
+    {
+      "what": "loader lock file",
+      "path": "/tmp/tickcheck-demo/tmp/remote_code_loader.lock",
+      "ioc": "litellm-2026-10-21"
+    }
+  ],
+  "process_check_skipped": "skipped (--demo)",
+  "exposed_files": [
+    "~/.aws/credentials",
+    "~/.claude/.credentials.json",
+    "~/.codex/auth.json",
+    "~/.config/gh/hosts.yml",
+    "~/.ssh/id_ed25519"
+  ],
+  "counts": {
+    "envs": 7,
+    "hooks": 12,
+    "bad": 2,
+    "suspect": 1,
+    "review": 2,
+    "ok": 7
+  },
+  "unreadable_dirs": 0
 }

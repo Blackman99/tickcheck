@@ -65,7 +65,7 @@ func TestPullDemo(t *testing.T) {
 	if c := run([]string{"pull", "--demo", "--yes", "--no-color"}, &o, &e, nil); c != 0 {
 		t.Fatalf("pull exit %d: %s", c, e.String())
 	}
-	if !strings.Contains(o.String(), "moved 5 files") || !strings.Contains(o.String(), "0 BAD hooks left") {
+	if !strings.Contains(o.String(), "moved 3 files + 2 compiled copies") || !strings.Contains(o.String(), "0 BAD hooks left") {
 		t.Fatalf("pull output: %s", o.String())
 	}
 	o.Reset()

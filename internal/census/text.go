@@ -366,6 +366,9 @@ func cacheFix(cs []CacheHit) string {
 	return strings.Join(out, " · ")
 }
 
+// DescribeItems is the "3 files + 2 compiled copies" phrase shared by the report and pull.
+func DescribeItems(items []PullItem) string { return describeItems(items) }
+
 func describeItems(items []PullItem) string {
 	var pyc, other int
 	for _, it := range items {

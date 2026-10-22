@@ -125,17 +125,17 @@
     <h2>Pull it straight out.</h2>
     <p class="lead"><code>tickcheck pull</code> moves each BAD hook, the module its <code>.pth</code> line loads, and their <code>__pycache__</code> copies into <code>~/.tickcheck/quarantine/&lt;time&gt;/</code>, with a manifest of every original path and sha256. <code>tickcheck restore &lt;dir&gt;</code> puts them back. Python is never started, before or after.</p>
 <pre class="term" aria-label="tickcheck pull --demo output"><span class="d">$</span> tickcheck pull --demo --yes
-tickcheck pull · 5 files from 1 environment · Python was never started
+tickcheck pull · 3 files + 2 compiled copies from 1 environment · Python was never started
 
   ~/proj/agent-proxy/.venv
     cook.pth  cook.py  cook.cpython-312.pyc  sitecustomize.py  sitecustomize.cpython-312.pyc
 
-<span class="o">moved</span> 5 files → ~/.tickcheck/quarantine/20261022-104512/
+<span class="o">moved</span> 3 files + 2 compiled copies → ~/.tickcheck/quarantine/20261022-104512/
 <span class="d">  manifest.json lists every file and its sha256; `tickcheck restore ~/.tickcheck/quarantine/20261022-104512` puts them back</span>
 
 <span class="d">re-check:</span> 0 BAD hooks left in 7 environments.
 <span class="s">note:</span> litellm 1.107.0 (litellm-2026-10-21) is still installed in ~/proj/agent-proxy/.venv: rebuild that env, don't run its pip.
-<span class="d">Pulling stops the next run. If it ever ran with network access, rotate what this machine could read.</span></pre>
+<span class="d">The next Python start won't run them. If they ever ran with network access, rotate what this machine could read.</span></pre>
     <p style="margin-top:22px">Pulling doesn't un-steal anything. On a BAD hit tickcheck lists the credential files of the kinds the stealer targets that <em>exist</em> on the machine. It never opens them. For rotation, <a href="https://github.com/Blackman99/keyroll">keyroll</a> finds every copy of an AI key.</p>
   </div>
 </section>

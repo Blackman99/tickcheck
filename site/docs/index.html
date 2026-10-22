@@ -163,12 +163,12 @@ tickcheck pull             <span class="c"># asks once, then moves</span>
 tickcheck pull --suspect   <span class="c"># BAD and SUSPECT</span></code></pre>
   <p>For each BAD hook, <code>pull</code> moves the hook file, every module its <code>import</code> lines load from that site dir, and their compiled <code>__pycache__</code> copies into <code>~/.tickcheck/quarantine/&lt;time&gt;/</code>. A <code>manifest.json</code> there lists each original path, its sha256 and mode. The census then runs again and prints what is left. Python is not started before, during or after.</p>
 <pre><code>$ tickcheck pull --demo --yes
-tickcheck pull · 5 files from 1 environment · Python was never started
+tickcheck pull · 3 files + 2 compiled copies from 1 environment · Python was never started
 
   ~/proj/agent-proxy/.venv
     cook.pth  cook.py  cook.cpython-312.pyc  sitecustomize.py  sitecustomize.cpython-312.pyc
 
-<span class="o">moved</span> 5 files → ~/.tickcheck/quarantine/20261022-104512/
+<span class="o">moved</span> 3 files + 2 compiled copies → ~/.tickcheck/quarantine/20261022-104512/
 <span class="c">  manifest.json lists every file and its sha256; `tickcheck restore ~/.tickcheck/quarantine/20261022-104512` puts them back</span>
 
 re-check: 0 BAD hooks left in 7 environments.
