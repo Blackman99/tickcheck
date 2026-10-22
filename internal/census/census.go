@@ -120,7 +120,9 @@ func Run(o Options) (*Report, error) {
 	if !o.NoAttrib {
 		attribute(r, home)
 	}
-	if r.Worst() == Bad {
+	// with --root only (a rootfs, a CI workspace) the caller's own home is not the
+	// scanned machine, so listing its credential files would point at the wrong box
+	if r.Worst() == Bad && (len(o.Roots) == 0 || o.Home != "") {
 		r.Exposed = exposure(home)
 	}
 	for _, e := range r.Envs {

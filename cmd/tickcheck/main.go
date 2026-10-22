@@ -179,6 +179,9 @@ func run(args []string, out, errw io.Writer, in *os.File) int {
 		fmt.Fprintln(errw, "tickcheck:", err)
 		return exitUsage
 	}
+	if !c.demo {
+		r.ScopeArgs = scopeArgs(&c)
+	}
 	if sub == "pull" {
 		return pull(c, opts, r, out, errw, in, st)
 	}
@@ -212,7 +215,7 @@ func pull(c cli, opts census.Options, r *census.Report, out, errw io.Writer, in 
 		}
 		p("Nothing to pull: no %s startup hooks in %d environments.\n", what, r.Counts.Envs)
 		if !c.suspect && r.Counts.Suspect > 0 {
-			p("%s %d SUSPECT hook%s: %s\n", st.Dim("There are"), r.Counts.Suspect, plural(r.Counts.Suspect), st.Code("tickcheck pull --suspect"))
+			p("%s %d SUSPECT hook%s: %s\n", st.Dim("There are"), r.Counts.Suspect, plural(r.Counts.Suspect), st.Code("tickcheck pull --suspect"+r.ScopeArgs))
 		}
 		return exitOK
 	}
@@ -351,3 +354,28 @@ func colorOn(w io.Writer, off bool) bool {
 }
 
 func fileExists(p string) bool { _, err := os.Lstat(p); return err == nil }
+
+// scopeArgs repeats the flags that chose what was scanned, so a suggested
+// "tickcheck pull" acts on the same environments the report showed.
+func scopeArgs(c *cli) string {
+	var b strings.Builder
+	q := func(v string) string {
+		if v == "" || strings.ContainsAny(v, " \t'\"$`\\") {
+			return "'" + strings.ReplaceAll(v, "'", `'\''`) + "'"
+		}
+		return v
+	}
+	for _, r := range c.roots {
+		b.WriteString(" --root " + q(r))
+	}
+	if c.home != "" {
+		b.WriteString(" --home " + q(c.home))
+	}
+	if c.noSystem && len(c.roots) == 0 {
+		b.WriteString(" --no-system")
+	}
+	for _, f := range c.iocs {
+		b.WriteString(" --ioc " + q(f))
+	}
+	return b.String()
+}

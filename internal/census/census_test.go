@@ -223,3 +223,30 @@ func TestRelated(t *testing.T) {
 		t.Error("should be related")
 	}
 }
+
+func TestRootOnlyScopesNextStepsAndSkipsHostExposure(t *testing.T) {
+	root := t.TempDir()
+	sp := filepath.Join(root, "usr", "local", "lib", "python3.12", "site-packages")
+	if err := os.MkdirAll(sp, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(sp, "cook.pth"), []byte("import cook\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	r, err := Run(Options{Roots: []string{root}, NoSystem: true, NoProcs: true, NoAttrib: true, Version: "test"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Worst() != Bad {
+		t.Fatalf("want BAD, got %v", r.Worst())
+	}
+	if len(r.Exposed) != 0 {
+		t.Fatalf("a --root scan must not list the caller's own credential files: %v", r.Exposed)
+	}
+	r.ScopeArgs = " --root " + root
+	var b strings.Builder
+	Render(&b, r, Style{}, false)
+	if !strings.Contains(b.String(), "tickcheck pull --root "+root) {
+		t.Fatalf("next step should repeat --root:\n%s", b.String())
+	}
+}

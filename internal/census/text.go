@@ -284,16 +284,26 @@ func renderNext(w io.Writer, r *Report, st Style) {
 	demo := ""
 	if r.Demo {
 		demo = " --demo"
+	} else {
+		demo = r.ScopeArgs
+	}
+	cw := 28
+	longest := "tickcheck pull" + demo
+	if worst == Suspect {
+		longest = "tickcheck pull --suspect" + demo
+	}
+	if l := len(longest); l+2 > cw {
+		cw = l + 2
 	}
 	switch {
 	case worst == Bad:
 		items := Plan(r, Bad)
 		p("%s\n", st.Bold("next"))
-		p("  1. %s %s\n", st.Code(pad("tickcheck pull"+demo, 28)), st.Dim("move "+describeItems(items)+" aside; Python never starts"))
+		p("  1. %s %s\n", st.Code(pad("tickcheck pull"+demo, cw)), st.Dim("move "+describeItems(items)+" aside; Python never starts"))
 		step := 2
 		for _, h := range r.Host {
 			if h.PID > 0 {
-				p("  %d. %s %s\n", step, st.Code(pad(fmt.Sprintf("kill %d", h.PID), 28)), st.Dim("the detached loader (check the command line above first)"))
+				p("  %d. %s %s\n", step, st.Code(pad(fmt.Sprintf("kill %d", h.PID), cw)), st.Dim("the detached loader (check the command line above first)"))
 				step++
 				break
 			}
@@ -306,7 +316,7 @@ func renderNext(w io.Writer, r *Report, st Style) {
 					id := strings.TrimSuffix(d[i+1:], ")")
 					if in := r.Feed.Incident(id); in != nil && !fixes[id] {
 						fixes[id] = true
-						p("  %d. %s %s\n", step, pad("rebuild", 28), st.Dim(in.Fix))
+						p("  %d. %s %s\n", step, pad("rebuild", cw), st.Dim(in.Fix))
 						step++
 						if len(in.Sources) > 0 {
 							srcs = append(srcs, in.Sources[0])
@@ -315,14 +325,18 @@ func renderNext(w io.Writer, r *Report, st Style) {
 				}
 			}
 		}
-		p("  %d. %s %s\n", step, pad("rotate", 28), st.Dim("everything this machine could read (list above); pulling a hook doesn't un-steal anything"))
+		what := "everything this machine could read (list above); pulling a hook doesn't un-steal anything"
+		if len(r.Exposed) == 0 {
+			what = "every secret this environment could reach when it ran; pulling a hook doesn't un-steal anything"
+		}
+		p("  %d. %s %s\n", step, pad("rotate", cw), st.Dim(what))
 		for _, s := range srcs {
 			p("     %s\n", st.Dim(s))
 		}
 	case worst == Suspect:
 		p("%s\n", st.Bold("next"))
-		p("  %s %s\n", st.Code(pad("tickcheck pull --suspect"+demo, 30)), st.Dim("move SUSPECT hooks aside (restore any time with tickcheck restore)"))
-		p("  %s %s\n", pad("or read them first", 30), st.Dim("they're plain text; `less` is safe, `python` is not"))
+		p("  %s %s\n", st.Code(pad("tickcheck pull --suspect"+demo, cw)), st.Dim("move SUSPECT hooks aside (restore any time with tickcheck restore)"))
+		p("  %s %s\n", pad("or read them first", cw), st.Dim("they're plain text; `less` is safe, `python` is not"))
 	case worst == Review:
 		p("%s %s\n", st.OK("Nothing matches a known compromise."), st.Dim("REVIEW = runs at startup and tickcheck can't vouch for it; read it with less, not python."))
 	default:

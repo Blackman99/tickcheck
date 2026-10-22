@@ -112,6 +112,7 @@ type Report struct {
 	Home       string     `json:"home"`
 	Roots      []string   `json:"roots"`
 	Demo       bool       `json:"demo,omitempty"`
+	ScopeArgs  string     `json:"-"` // flags to repeat in suggested commands (--root …)
 	Envs       []Env      `json:"envs"`
 	Caches     []CacheHit `json:"caches,omitempty"`
 	Host       []HostHit  `json:"host,omitempty"`
