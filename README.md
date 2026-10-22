@@ -30,3 +30,5 @@ tickcheck pull       # move BAD hooks into ~/.tickcheck/quarantine/ (restore any
 Try it on a generated home first: `tickcheck --demo`.
 
 Docs (verdict rules, IOC feed format, containers, CI, FAQ): **https://blackman99.github.io/tickcheck/docs/**
+
+Blog: [What runs every time Python starts, and why pip is the wrong first check](docs/blog/python-startup-hooks.md) ([中文](docs/blog/python-startup-hooks.zh.md))
