@@ -69,16 +69,27 @@ func Render(w io.Writer, r *Report, st Style, all bool) {
 	if len(r.Envs) == 1 {
 		envWord = "environment"
 	}
-	p("%s %s %d Python %s %s Python was never started %s %s\n",
-		st.Bold("tickcheck"), st.Dim("·"), len(r.Envs), envWord, st.Dim("·"), st.Dim("·"), st.Dim(r.Took))
+	never := "Python was never started"
+	if r.Image != nil {
+		never = "the image was never run"
+	}
+	p("%s %s %d Python %s %s %s %s %s\n",
+		st.Bold("tickcheck"), st.Dim("·"), len(r.Envs), envWord, st.Dim("·"), never, st.Dim("·"), st.Dim(r.Took))
+	if r.Image != nil {
+		renderImageHead(w, r, st)
+	}
 	if r.Demo {
 		p("%s generated home %s %s nothing on this machine was read\n", st.Suspect("DEMO"), r.Home, st.Dim("—"))
 	}
 	p("\n")
+	if len(r.Envs) == 0 && r.Image != nil {
+		p("No Python environments in this image (no site-packages, dist-packages or pyvenv.cfg in any layer).\n")
+		return
+	}
 	if len(r.Envs) == 0 {
 		p("No Python environments found under %s.\n", strings.Join(tildeAll(r.Roots, r.Home), ", "))
 		p("%s point it at them: %s\n", st.Dim("If yours live elsewhere,"), st.Code("tickcheck --root /path/to/envs"))
-		p("%s %s\n", st.Dim("Containers:"), st.Code("docker export <id> | tar -x -C /tmp/rootfs && tickcheck --root /tmp/rootfs"))
+		p("%s %s\n", st.Dim("Containers:"), st.Code("tickcheck image <image or docker save tarball>"))
 		return
 	}
 	c := r.Counts
@@ -128,7 +139,11 @@ func Render(w io.Writer, r *Report, st Style, all bool) {
 		p("  %s\n\n", st.Dim("the next install from cache brings it straight back: "+cacheFix(r.Caches)))
 	}
 	if len(r.Host) > 0 {
-		p("%s\n", st.Bold("this host"))
+		host := "this host"
+		if r.Image != nil {
+			host = "left in the image"
+		}
+		p("%s\n", st.Bold(host))
 		for _, h := range r.Host {
 			if h.PID > 0 {
 				p("  %s pid %d %s\n    %s\n", st.Bad("LIVE"), h.PID, h.What, st.Dim(h.Cmd))
@@ -291,6 +306,10 @@ func ownerOf(h Hook) *Owner {
 func renderNext(w io.Writer, r *Report, st Style) {
 	p := func(f string, a ...any) { fmt.Fprintf(w, f, a...) }
 	worst := r.Worst()
+	if r.Image != nil {
+		renderNextImage(w, r, st, worst)
+		return
+	}
 	demo := ""
 	if r.Demo {
 		demo = " --demo"

@@ -2,7 +2,7 @@
 
 Each step has to serve [GOAL.md](GOAL.md): show every piece of code that runs when Python starts, everywhere on the machine, without starting Python.
 
-## v0.1 (now)
+## v0.1 (shipped)
 
 - Census of `.pth` / `sitecustomize` / `usercustomize` hooks in venvs, agent worktrees, pipx, uv tools and caches, pyenv, uv pythons, conda, pre-commit, user site and system installs.
 - Verdicts from the file alone (IOC hashes and dists, RECORD hash, payload signals, known patterns).
@@ -10,9 +10,11 @@ Each step has to serve [GOAL.md](GOAL.md): show every piece of code that runs wh
 - Who installed it, from Claude Code / Codex / OpenCode / Gemini CLI transcripts and shell history.
 - `pull` / `restore` with a manifest. `--json`, exit codes, `--root` for rootfs and CI.
 
-## v0.2: images without running them
+## v0.2: images without running them (done)
 
 `tickcheck image <ref|file.tar>` reads OCI image layers (whiteouts included) and runs the census on the merged filesystem. No `docker run`, no export step.
+
+Shipped: `docker save` archives (classic and OCI), OCI layouts (tar or folder), public registries (anonymous token flow), `--platform`, `--tag`, per-layer digest checks. Not yet: private-registry credentials, zstd layers, Windows container layers.
 
 ## v0.3: after every install
 

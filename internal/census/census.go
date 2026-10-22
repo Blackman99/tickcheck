@@ -82,7 +82,7 @@ func Run(o Options) (*Report, error) {
 		}
 		r.Envs = append(r.Envs, e)
 	}
-	for _, e := range groupEnvs(sites, home) {
+	for _, e := range groupEnvs(sites, home, o.ImageRoot) {
 		for _, s := range e.SiteDirs {
 			hooks, bad := scanSite(s, feed)
 			e.Hooks = append(e.Hooks, hooks...)
@@ -101,7 +101,7 @@ func Run(o Options) (*Report, error) {
 		}
 		r.Envs = append(r.Envs, *e)
 	}
-	r.Caches = scanCaches(home, feed, roots)
+	r.Caches = scanCaches(home, feed, roots, o.ImageRoot == "")
 	tmps := o.TmpDirs
 	if len(tmps) == 0 {
 		tmps = []string{os.TempDir()}
@@ -122,7 +122,7 @@ func Run(o Options) (*Report, error) {
 	}
 	// with --root only (a rootfs, a CI workspace) the caller's own home is not the
 	// scanned machine, so listing its credential files would point at the wrong box
-	if r.Worst() == Bad && (len(o.Roots) == 0 || o.Home != "") {
+	if r.Worst() == Bad && o.ImageRoot == "" && (len(o.Roots) == 0 || o.Home != "") {
 		r.Exposed = exposure(home)
 	}
 	for _, e := range r.Envs {
@@ -147,7 +147,7 @@ func Run(o Options) (*Report, error) {
 }
 
 // scanCaches looks for IOC-listed dists or wheels in pip/uv/poetry caches.
-func scanCaches(home string, feed *IOCFeed, roots []string) []CacheHit {
+func scanCaches(home string, feed *IOCFeed, roots []string, useEnv bool) []CacheHit {
 	var dirs []struct{ p, tool string }
 	add := func(p, tool string) {
 		if st, err := os.Stat(p); err == nil && st.IsDir() {
@@ -164,7 +164,7 @@ func scanCaches(home string, feed *IOCFeed, roots []string) []CacheHit {
 		add(filepath.Join(home, ".cache", "pypoetry"), "poetry")
 		add(filepath.Join(home, "Library", "Caches", "pypoetry"), "poetry")
 	}
-	if v := os.Getenv("UV_CACHE_DIR"); v != "" {
+	if v := os.Getenv("UV_CACHE_DIR"); v != "" && useEnv {
 		add(v, "uv")
 	}
 	var out []CacheHit

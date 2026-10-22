@@ -31,6 +31,14 @@ jobs:
           cat demo.txt
           test "$code" = 4
           grep -q "cook.pth" demo.txt
+      - name: census of a real public image, pulled without docker (read-only)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set +e; ./tc image python:3.11-slim --no-color --all > img.txt; code=$?; set -e
+          cat img.txt
+          test "$code" = 0
+          grep -q "distutils-precedence.pth" img.txt
       - name: census of this runner's real Python installs (read-only)
         shell: bash
         run: |

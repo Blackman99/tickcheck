@@ -38,6 +38,7 @@ type cli struct {
 	noColor, demo, noAttrib bool
 	suspect, yes, dryRun    bool
 	maxDepth                int
+	platform, tag           string
 }
 
 const usage = `tickcheck — what runs every time Python starts? Checked without starting Python.
@@ -47,6 +48,9 @@ usage:
   tickcheck pull [--suspect] [--yes] [--dry-run]
                                     move BAD (and SUSPECT) hooks into ~/.tickcheck/quarantine/
   tickcheck restore <dir>           put a quarantined set back
+  tickcheck image <file.tar|dir|ref> [--platform os/arch] [--tag T]
+                                    census of a container image without running it:
+                                    docker save output, an OCI layout, or a public registry ref
   tickcheck ioc                     print the built-in IOC feed (JSON; extend it with --ioc)
   tickcheck version
 
@@ -61,6 +65,10 @@ flags:
   --no-attrib       don't search agent transcripts / shell history for who installed a package
   --max-depth N     directory depth to walk under each root (default 12)
   --demo            run on a generated home with a defanged LiteLLM 1.107.0 drop
+
+image flags:
+  --platform OS/ARCH  which image of a multi-arch index (default linux/amd64)
+  --tag NAME          which image of an archive that holds several
 
 pull flags:
   --suspect         also pull SUSPECT hooks
@@ -95,10 +103,12 @@ func run(args []string, out, errw io.Writer, in *os.File) int {
 		b, _ := json.MarshalIndent(feed, "", "  ")
 		fmt.Fprintln(out, string(b))
 		return exitOK
-	case "scan", "pull", "restore":
+	case "scan", "pull", "restore", "image":
 	default:
 		fmt.Fprintf(errw, "tickcheck: unknown command %q\n", sub)
-		if st, err := os.Stat(sub); err == nil && st.IsDir() || strings.ContainsAny(sub, `/\`) {
+		if l := strings.ToLower(sub); strings.HasSuffix(l, ".tar") || strings.HasSuffix(l, ".tar.gz") || strings.HasSuffix(l, ".tgz") {
+			fmt.Fprintf(errw, "To scan an image tarball: tickcheck image %s\n", sub)
+		} else if st, err := os.Stat(sub); err == nil && st.IsDir() || strings.ContainsAny(sub, `/\`) {
 			fmt.Fprintf(errw, "To scan a folder: tickcheck --root %s\n", sub)
 		} else if s := suggest(sub); s != "" {
 			fmt.Fprintf(errw, "Did you mean `tickcheck %s`?\n", s)
@@ -124,6 +134,8 @@ func run(args []string, out, errw io.Writer, in *os.File) int {
 	fs.BoolVar(&c.yes, "y", false, "")
 	fs.BoolVar(&c.dryRun, "dry-run", false, "")
 	fs.IntVar(&c.maxDepth, "max-depth", 12, "")
+	fs.StringVar(&c.platform, "platform", "", "")
+	fs.StringVar(&c.tag, "tag", "", "")
 	var pos []string
 	for {
 		if err := fs.Parse(args); err != nil {
@@ -163,9 +175,26 @@ func run(args []string, out, errw io.Writer, in *os.File) int {
 		}
 		return exitOK
 	}
+	if sub == "image" {
+		return image(c, pos, out, errw, st)
+	}
+	if c.platform != "" || c.tag != "" {
+		fmt.Fprintln(errw, "tickcheck: --platform and --tag only apply to `tickcheck image`")
+		return exitUsage
+	}
 	if len(pos) > 0 {
 		fmt.Fprintf(errw, "tickcheck: unexpected argument %q (to scan a folder use --root %s)\n", pos[0], pos[0])
 		return exitUsage
+	}
+	for _, rt := range c.roots {
+		if st, err := os.Stat(rt); err != nil || !st.IsDir() {
+			fmt.Fprintf(errw, "tickcheck: --root %s: not a directory", rt)
+			if l := strings.ToLower(rt); strings.HasSuffix(l, ".tar") || strings.HasSuffix(l, ".tar.gz") {
+				fmt.Fprintf(errw, " (for an image tarball: tickcheck image %s)", rt)
+			}
+			fmt.Fprintln(errw)
+			return exitUsage
+		}
 	}
 	opts := census.Options{Home: c.home, Roots: c.roots, NoSystem: c.noSystem, ExtraIOC: c.iocs, MaxDepth: c.maxDepth, Version: version, NoAttrib: c.noAttrib}
 	if c.demo {
@@ -304,7 +333,7 @@ func plural(n int) string {
 }
 
 func suggest(s string) string {
-	for _, c := range []string{"pull", "restore", "ioc", "version", "scan"} {
+	for _, c := range []string{"pull", "restore", "image", "ioc", "version", "scan"} {
 		if strings.HasPrefix(c, s) || strings.HasPrefix(s, c) || lev(s, c) <= 2 {
 			if c == "scan" {
 				return "(no command needed: just tickcheck)"

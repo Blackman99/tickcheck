@@ -23,7 +23,11 @@ Binaries for Linux, macOS and Windows (amd64/arm64) are on the [releases page](h
 ```sh
 tickcheck            # census of every env under ~ and the system installs; exit 4 = BAD, 3 = SUSPECT
 tickcheck pull       # move BAD hooks into ~/.tickcheck/quarantine/ (restore any time), still without Python
+tickcheck image ghcr.io/berriai/litellm:main-stable   # a container image, without running it or a Docker daemon
+tickcheck image app.tar                               # `docker save` output or an OCI layout (tar or folder)
 ```
+
+`tickcheck image` reads the layers itself, applies whiteouts so files deleted in a later layer don't count, and runs the same census on the merged filesystem. Same verdicts, `--json` and exit codes. It pulls public images anonymously; for a private one, `docker save` it and pass the tarball. Multi-arch images default to `linux/amd64`; pick another with `--platform linux/arm64`.
 
 ![tickcheck --demo: seven environments, the LiteLLM drop flagged BAD with the agent session that installed it](site/img/demo.gif)
 
