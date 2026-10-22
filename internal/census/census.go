@@ -38,7 +38,7 @@ func Run(o Options) (*Report, error) {
 		}
 	}
 	seen := map[string]bool{}
-	var sites []string
+	var sites, stdlibs []string
 	for _, root := range roots {
 		abs, err := filepath.Abs(root)
 		if err != nil {
@@ -48,7 +48,9 @@ func Run(o Options) (*Report, error) {
 			continue
 		}
 		r.Roots = append(r.Roots, abs)
-		for _, s := range siteDirs(abs, o.MaxDepth, &r.Unreadable) {
+		ss, sl := siteDirs(abs, o.MaxDepth, &r.Unreadable)
+		stdlibs = append(stdlibs, sl...)
+		for _, s := range ss {
 			real := s
 			if rs, err := filepath.EvalSymlinks(s); err == nil {
 				real = rs
@@ -58,6 +60,27 @@ func Run(o Options) (*Report, error) {
 				sites = append(sites, s)
 			}
 		}
+	}
+	// stdlib dirs without their own site-packages (Debian's /usr/lib/python3.X,
+	// whose packages live in /usr/lib/python3/dist-packages) still load sitecustomize.
+	for _, sl := range stdlibs {
+		if seen[filepath.Join(sl, "site-packages")] || fileExists(filepath.Join(sl, "site-packages")) {
+			continue
+		}
+		hooks := scanStdlib(sl, feed)
+		if len(hooks) == 0 {
+			continue
+		}
+		e := Env{Root: sl, Kind: "stdlib", SiteDirs: []string{sl}, Hooks: hooks}
+		if m := pyVerRE.FindStringSubmatch(sl); m != nil {
+			e.Python = m[1]
+		}
+		for _, h := range hooks {
+			if h.Verdict > e.Verdict {
+				e.Verdict = h.Verdict
+			}
+		}
+		r.Envs = append(r.Envs, e)
 	}
 	for _, e := range groupEnvs(sites, home) {
 		for _, s := range e.SiteDirs {

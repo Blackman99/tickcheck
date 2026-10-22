@@ -1,0 +1,53 @@
+name: CI
+on:
+  push: {branches: [main]}
+  pull_request:
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with: {go-version-file: go.mod}
+      - if: runner.os == 'Linux'
+        run: test -z "$(gofmt -l .)" || (gofmt -l . && exit 1)
+      - run: go vet ./...
+      - if: runner.os == 'Linux'
+        run: go test -race ./...
+      - if: runner.os != 'Linux'
+        run: go test ./...
+      - name: demo smoke (exit 4 = BAD found, as planted)
+        shell: bash
+        run: |
+          go build -o tc ./cmd/tickcheck
+          ./tc version
+          set +e; ./tc --demo --no-color > demo.txt; code=$?; set -e
+          cat demo.txt
+          test "$code" = 4
+          grep -q "cook.pth" demo.txt
+      - name: census of this runner's real Python installs (read-only)
+        shell: bash
+        run: |
+          set +e; ./tc --no-color; code=$?; set -e
+          echo "exit $code"; test "$code" -lt 4
+  real-python:
+    name: real pip installs, real startup hooks (${{ matrix.os }}, Python ${{ matrix.py }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        py: ['3.10', '3.13']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with: {go-version-file: go.mod}
+      - uses: actions/setup-python@v6
+        with: {python-version: '${{ matrix.py }}'}
+      - run: PYTHON=python ./scripts/real-python.sh

@@ -18,7 +18,7 @@ type sig struct {
 var sigs = []sig{
 	{"encoded blob → exec", regexp.MustCompile(`(?s)(b64decode|a85decode|b32decode|zlib\.decompress|lzma\.decompress|marshal\.loads|bytes\.fromhex|codecs\.decode).{0,400}\b(exec|eval|compile)\s*\(|\b(exec|eval)\s*\(\s*(__import__\(['"](zlib|base64|marshal)|zlib|base64|marshal)`)},
 	{"spawns processes", regexp.MustCompile(`\bsubprocess\.|\bos\.(system|popen|exec[lv]p?e?|spawn[lv]p?e?)\s*\(|\bpty\.spawn`)},
-	{"network", regexp.MustCompile(`\burllib\.request\b|\burlopen\s*\(|\brequests\.(get|post|put|Session)\b|\bhttp\.client\b|\bsocket\.(socket|create_connection)\b|\bhttpx\.|\baiohttp\b|https?://[A-Za-z0-9.-]+`)},
+	{"network", regexp.MustCompile(`\burllib\.request\b|\burlopen\s*\(|\brequests\.(get|post|put|Session)\b|\bhttp\.client\b|\bsocket\.(socket|create_connection)\b|\bhttpx\.(get|post|Client)|\baiohttp\.ClientSession`)},
 	{"detaches (fork/setsid)", regexp.MustCompile(`\bos\.fork\s*\(|\bos\.setsid\s*\(|\bdaemon\s*=\s*True|\bfcntl\.flock\b`)},
 	{"reads credentials", regexp.MustCompile(`\.aws/credentials|\.ssh/id_|\.kube/config|auth\.json|\.credentials\.json|\.git-credentials|\.npmrc|\.pypirc|Login Data|cookies\.sqlite|\.gnupg`)},
 }

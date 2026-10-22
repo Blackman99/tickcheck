@@ -92,7 +92,9 @@ func run(args []string, out, errw io.Writer, in *os.File) int {
 	case "scan", "pull", "restore":
 	default:
 		fmt.Fprintf(errw, "tickcheck: unknown command %q\n", sub)
-		if s := suggest(sub); s != "" {
+		if st, err := os.Stat(sub); err == nil && st.IsDir() || strings.ContainsAny(sub, `/\`) {
+			fmt.Fprintf(errw, "To scan a folder: tickcheck --root %s\n", sub)
+		} else if s := suggest(sub); s != "" {
 			fmt.Fprintf(errw, "Did you mean `tickcheck %s`?\n", s)
 		}
 		fmt.Fprintln(errw, "Run `tickcheck --help` for usage.")
@@ -116,21 +118,29 @@ func run(args []string, out, errw io.Writer, in *os.File) int {
 	fs.BoolVar(&c.yes, "y", false, "")
 	fs.BoolVar(&c.dryRun, "dry-run", false, "")
 	fs.IntVar(&c.maxDepth, "max-depth", 12, "")
-	if err := fs.Parse(args); err != nil {
-		if errors.Is(err, flag.ErrHelp) {
-			fmt.Fprint(out, usage)
-			return exitOK
+	var pos []string
+	for {
+		if err := fs.Parse(args); err != nil {
+			if errors.Is(err, flag.ErrHelp) {
+				fmt.Fprint(out, usage)
+				return exitOK
+			}
+			fmt.Fprintf(errw, "tickcheck: %v\nRun `tickcheck --help` for usage.\n", err)
+			return exitUsage
 		}
-		fmt.Fprintf(errw, "tickcheck: %v\nRun `tickcheck --help` for usage.\n", err)
-		return exitUsage
+		if fs.NArg() == 0 {
+			break
+		}
+		pos = append(pos, fs.Arg(0))
+		args = fs.Args()[1:]
 	}
 	st := census.Style{On: colorOn(out, c.noColor || c.jsonOut)}
 	if sub == "restore" {
-		if fs.NArg() != 1 {
+		if len(pos) != 1 {
 			fmt.Fprintln(errw, "tickcheck: restore needs the quarantine folder, e.g. tickcheck restore ~/.tickcheck/quarantine/20261022-104512")
 			return exitUsage
 		}
-		m, err := census.Restore(fs.Arg(0))
+		m, err := census.Restore(pos[0])
 		if m != nil {
 			n := 0
 			for _, it := range m.Items {
@@ -147,8 +157,8 @@ func run(args []string, out, errw io.Writer, in *os.File) int {
 		}
 		return exitOK
 	}
-	if fs.NArg() > 0 {
-		fmt.Fprintf(errw, "tickcheck: unexpected argument %q (to scan a folder use --root %s)\n", fs.Arg(0), fs.Arg(0))
+	if len(pos) > 0 {
+		fmt.Fprintf(errw, "tickcheck: unexpected argument %q (to scan a folder use --root %s)\n", pos[0], pos[0])
 		return exitUsage
 	}
 	opts := census.Options{Home: c.home, Roots: c.roots, NoSystem: c.noSystem, ExtraIOC: c.iocs, MaxDepth: c.maxDepth, Version: version, NoAttrib: c.noAttrib}

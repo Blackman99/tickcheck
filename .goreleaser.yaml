@@ -1,0 +1,20 @@
+version: 2
+project_name: tickcheck
+builds:
+  - main: ./cmd/tickcheck
+    binary: tickcheck
+    env: [CGO_ENABLED=0]
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+    flags: [-trimpath]
+    ldflags: ["-s -w -X main.version={{.Version}}"]
+archives:
+  - name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    formats: [tar.gz]
+    format_overrides: [{goos: windows, formats: [zip]}]
+    files: [LICENSE, README.md]
+checksum: {name_template: checksums.txt}
+changelog: {sort: asc}
+release:
+  footer: |
+    Install: `go install github.com/Blackman99/tickcheck/cmd/tickcheck@v{{ .Version }}` or download a binary below and check it against `checksums.txt`.

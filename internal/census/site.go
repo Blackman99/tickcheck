@@ -311,3 +311,18 @@ func scanSite(site string, feed *IOCFeed) ([]Hook, []string) {
 	}
 	return hooks, badDists
 }
+
+// scanStdlib checks a bare stdlib dir for sitecustomize / usercustomize.
+func scanStdlib(dir string, feed *IOCFeed) []Hook {
+	var hooks []Hook
+	for _, mod := range []string{"sitecustomize", "usercustomize"} {
+		for _, mp := range moduleFiles(dir, mod) {
+			mf, mb := readFileInfo(mp, dir, nil)
+			mf.Signals = signals(mb)
+			h := Hook{Kind: mod, File: mf, Residue: residue(dir, mod)}
+			judge(&h, feed)
+			hooks = append(hooks, h)
+		}
+	}
+	return hooks
+}

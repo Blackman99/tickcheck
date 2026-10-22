@@ -215,10 +215,14 @@ func renderHook(w io.Writer, r *Report, h Hook, st Style) {
 	default:
 		what = st.Dim("imported on every start · " + human(h.File.Size))
 	}
-	p("%s%s %s %s\n", ind, st.V(h.Verdict, "▸"), st.V(h.Verdict, pad(name, 24)), what)
 	sub := ind + "    "
+	if len([]rune(name)) > 24 {
+		p("%s%s %s\n%s%s\n", ind, st.V(h.Verdict, "▸"), st.V(h.Verdict, name), sub, what)
+	} else {
+		p("%s%s %s %s\n", ind, st.V(h.Verdict, "▸"), st.V(h.Verdict, pad(name, 24)), what)
+	}
 	for _, l := range h.Loads {
-		p("%s%s %s %s\n", sub, st.Dim("loads"), pad(filepath.Base(l.Path), 18), st.Dim(human(l.Size)+"  sha256 "+short(l.SHA256)+"…"))
+		p("%s%s %s %s\n", sub, st.Dim("loads"), filepath.ToSlash(l.Rel), st.Dim("· "+human(l.Size)+" · sha256 "+short(l.SHA256)+"…"))
 	}
 	if o := ownerOf(h); o != nil {
 		inst := o.Installer

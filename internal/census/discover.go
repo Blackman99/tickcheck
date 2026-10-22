@@ -36,9 +36,11 @@ var pruneNames = map[string]bool{
 
 var pyVerRE = regexp.MustCompile(`(?i)python(\d+\.\d+t?)`)
 
-// siteDirs walks root and returns every site-packages / dist-packages dir.
-func siteDirs(root string, maxDepth int, unreadable *int) []string {
-	var out []string
+var stdlibRE = regexp.MustCompile(`^python\d+\.\d+t?$`)
+
+// siteDirs walks root and returns every site-packages / dist-packages dir,
+// plus stdlib dirs (lib/pythonX.Y with os.py), where sitecustomize also loads from.
+func siteDirs(root string, maxDepth int, unreadable *int) (out, stdlibs []string) {
 	root = filepath.Clean(root)
 	base := strings.Count(root, string(filepath.Separator))
 	_ = filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
@@ -59,12 +61,15 @@ func siteDirs(root string, maxDepth int, unreadable *int) []string {
 			out = append(out, p)
 			return fs.SkipDir
 		}
+		if stdlibRE.MatchString(name) && fileExists(filepath.Join(p, "os.py")) {
+			stdlibs = append(stdlibs, p)
+		}
 		if strings.Count(p, string(filepath.Separator))-base >= maxDepth {
 			return fs.SkipDir
 		}
 		return nil
 	})
-	return out
+	return out, stdlibs
 }
 
 // systemRoots are base installs outside the home dir.
@@ -145,6 +150,8 @@ func envRootKind(site, home string) (string, string) {
 		return root, "pipx"
 	case strings.Contains(slash, "/uv/tools/"):
 		return root, "uv tool"
+	case strings.Contains(slash, "/uv/archive-v") || strings.Contains(slash, "/uv/environments-v"):
+		return root, "uvx env (uv cache)"
 	case strings.Contains(slash, "/uv/python/"):
 		return root, "uv python"
 	case strings.Contains(slash, "/.pyenv/versions/"):
