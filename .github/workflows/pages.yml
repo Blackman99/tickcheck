@@ -1,0 +1,40 @@
+name: Pages
+on:
+  push: {branches: [main], paths: ['site/**', '.github/workflows/pages.yml']}
+  workflow_dispatch:
+permissions: {contents: read, pages: write, id-token: write}
+concurrency: {group: pages, cancel-in-progress: true}
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: {name: github-pages, url: '${{ steps.d.outputs.page_url }}'}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with: {path: site}
+      - id: d
+        uses: actions/deploy-pages@v4
+  verify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: landing, docs, share image, install script answer 200
+        run: |
+          base=https://blackman99.github.io/tickcheck
+          for u in "" docs/ og.png img/logo-512.png img/favicon.svg install.sh demo.json; do
+            for i in 1 2 3 4 5 6; do
+              c=$(curl -s -o /dev/null -w '%{http_code}' "$base/$u")
+              [ "$c" = 200 ] && break; sleep 10
+            done
+            echo "$u -> $c"; [ "$c" = 200 ]
+          done
+      - name: share tags point at an absolute image
+        run: |
+          for u in "" docs/; do
+            h=$(curl -s "https://blackman99.github.io/tickcheck/$u")
+            for t in 'property="og:image" content="https://blackman99.github.io/tickcheck/og.png"' 'name="twitter:card" content="summary_large_image"' 'property="og:title"' 'name="twitter:image"'; do
+              echo "$h" | grep -q "$t" || { echo "missing on /$u: $t"; exit 1; }
+            done
+          done
+          echo ok
