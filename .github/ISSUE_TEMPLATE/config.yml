@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Keys pasted into agent chats (transcripts)
-    url: https://github.com/Blackman99/spillscan
-    about: keyroll does not scan session transcripts; spillscan does.
+  - name: Rotating keys after an incident
+    url: https://github.com/Blackman99/keyroll
+    about: tickcheck lists what could have been read; keyroll finds every copy of an AI key and rotates it.

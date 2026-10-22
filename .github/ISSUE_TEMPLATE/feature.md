@@ -1,13 +1,13 @@
 ---
-name: Feature / new location
-about: a tool or file keyroll should know about
+name: Known pattern / new location / incident
+about: a legitimate hook tickcheck should recognise, a place it should look, or a new incident for the feed
 labels: enhancement
 ---
 
-keyroll's goal: find every copy of your AI keys, tell which still work, rotate them everywhere at once ([GOAL.md](../../GOAL.md)).
+tickcheck's goal: show every piece of code that runs when Python starts, everywhere on the machine, without starting Python ([GOAL.md](../../GOAL.md)).
 
-**Tool / provider**
+**Which kind**: known pattern · new location · new incident
 
-**Where it stores the key** (path per OS, and a link to its docs or source if you have one)
+**Details** (the hook's file name and contents, which package ships it; or the path layout; or the advisory link and hashes)
 
-**Is that file read live by the tool, a backup, or a database?**
+**Source** (a link anyone can check)

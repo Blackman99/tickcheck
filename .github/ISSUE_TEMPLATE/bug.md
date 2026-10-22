@@ -1,17 +1,17 @@
 ---
 name: Bug
-about: keyroll missed a copy, mislabelled one, or did something wrong
+about: tickcheck missed a hook, mislabelled one, or did something wrong
 labels: bug
 ---
 
-**Never paste a real key here.** Fingerprints (`#3fa2c1d0`) and hints (`sk-ant-…a91f`) are fine.
+**Don't paste credentials or full transcripts.** Hook file contents are usually fine (they're short); trim anything private.
 
 **What happened**
 
 **What you expected**
 
-**Tool and file** (e.g. "Cursor 2.4 on macOS, `~/Library/Application Support/Cursor/User/settings.json`")
+**Environment** (OS, how the Python env was made: venv / uv / conda / pipx …, and the site-packages path)
 
-**`keyroll version`**
+**`tickcheck version`**
 
-**Output** (`keyroll --json` is fine: it never contains key values)
+**Output** (`tickcheck --json --no-attrib` for the env in question; redact paths you don't want public)
