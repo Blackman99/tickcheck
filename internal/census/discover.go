@@ -23,6 +23,7 @@ type Options struct {
 	Version     string
 	Demo        bool
 	ExposureFor []string // override for tests
+	ImageRoot   string   // set by RunImage: the temp dir holding the merged image filesystem
 }
 
 // pruned directory names: big trees that never hold a Python env.
@@ -106,11 +107,11 @@ func systemRoots() []string {
 }
 
 // groupEnvs maps site dirs to environments.
-func groupEnvs(sites []string, home string) []*Env {
+func groupEnvs(sites []string, home, imageRoot string) []*Env {
 	byRoot := map[string]*Env{}
 	var order []string
 	for _, s := range sites {
-		root, kind := envRootKind(s, home)
+		root, kind := envRootKind(s, home, imageRoot)
 		e := byRoot[root]
 		if e == nil {
 			e = &Env{Root: root, Kind: kind}
@@ -130,7 +131,7 @@ func groupEnvs(sites []string, home string) []*Env {
 	return out
 }
 
-func envRootKind(site, home string) (string, string) {
+func envRootKind(site, home, imageRoot string) (string, string) {
 	// .../lib/python3.12/site-packages -> 3 up; .../Lib/site-packages -> 2 up
 	parent := filepath.Dir(site)
 	root := parent
@@ -143,6 +144,9 @@ func envRootKind(site, home string) (string, string) {
 		}
 	}
 	slash := filepath.ToSlash(site)
+	if imageRoot != "" {
+		slash = ImagePath(site, imageRoot) // classify by the path inside the image
+	}
 	hasCfg := fileExists(filepath.Join(root, "pyvenv.cfg"))
 	switch {
 	case strings.Contains(slash, "/.local/lib/python") || strings.Contains(slash, "/Library/Python/") && !hasCfg || strings.Contains(slash, "/AppData/Roaming/Python/"):

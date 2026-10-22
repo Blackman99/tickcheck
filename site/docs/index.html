@@ -114,6 +114,7 @@ tickcheck --root .     <span class="c"># only this folder</span></code></pre>
     <tr><td><code>tickcheck</code></td><td>Census (the default command). Same as <code>tickcheck scan</code>.</td></tr>
     <tr><td><code>tickcheck pull</code></td><td>Move BAD hooks aside into a quarantine folder. <a href="#pull">§05</a></td></tr>
     <tr><td><code>tickcheck restore &lt;dir&gt;</code></td><td>Put a quarantined set back, byte for byte.</td></tr>
+    <tr><td><code>tickcheck image &lt;ref|file|dir&gt;</code></td><td>Census of a container image without running it. <a href="#ci">§10</a></td></tr>
     <tr><td><code>tickcheck ioc</code></td><td>Print the built-in IOC feed as JSON. <a href="#ioc">§08</a></td></tr>
     <tr><td><code>tickcheck version</code></td><td>Print the version.</td></tr>
   </table>
@@ -289,12 +290,18 @@ re-check: 0 BAD hooks left in 7 environments.
   <span class="c"># fails the step on 3 (SUSPECT) or 4 (BAD); use `|| [ $? -lt 4 ]` to fail on BAD only</span></code></pre>
   <p>tickcheck's own CI runs it on the GitHub runner images (Ubuntu, macOS, Windows) every push and fails only on BAD.</p>
   <h3>A container image</h3>
-  <p>Don't <code>docker run</code> an image you suspect: its entrypoint starts Python. Export the filesystem and scan it as a folder:</p>
-<pre><code>cid=$(docker create ghcr.io/berriai/litellm:main-v1.107.0)
-mkdir rootfs && docker export "$cid" | tar -x -C rootfs
-tickcheck --root rootfs
-docker rm "$cid"</code></pre>
-  <p>With <code>--root</code> only, the report doesn't list your own home's credential files, because they are not the scanned machine's. Scanning images directly (without export) is on the <a href="https://github.com/Blackman99/tickcheck/blob/main/ROADMAP.md">roadmap</a>.</p>
+  <p>Don't <code>docker run</code> an image you suspect: its entrypoint starts Python, and so does <code>docker run … pip list</code>. Scan the image instead:</p>
+<pre><code>tickcheck image ghcr.io/berriai/litellm:main-stable          <span class="c"># public registry, pulled anonymously</span>
+tickcheck image ghcr.io/berriai/litellm:main-stable --platform linux/arm64
+docker save myapp:latest -o myapp.tar && tickcheck image myapp.tar   <span class="c"># private or local images</span>
+tickcheck image ./oci-layout/ --tag myapp:latest              <span class="c"># an OCI layout folder (skopeo, buildah, crane)</span></code></pre>
+  <p>tickcheck reads the image itself. It needs no Docker daemon and never runs a container. It accepts <code>docker save</code> archives (the classic layout and the OCI layout Docker 25+ writes, gzipped or not), OCI image layouts as a tarball or folder, and public registry references (Docker Hub, GHCR and any registry with anonymous pull through the standard token flow). Layers are applied bottom to top. A <code>.wh.&lt;name&gt;</code> whiteout deletes that file from lower layers, and a <code>.wh..wh..opq</code> marker hides a directory's lower contents, so a hook removed in a later layer is not reported. Each layer's sha256 is checked against its digest.</p>
+  <p>Only what the census reads is written to a temporary folder: files at the top of each <code>site-packages</code>/<code>dist-packages</code>, package metadata, top-level package <code>__init__</code> files, stdlib-level <code>sitecustomize</code>, <code>pyvenv.cfg</code>, package caches and <code>/tmp</code> markers. Everything else is streamed past. The folder is deleted afterwards. Paths in the report are paths inside the image.</p>
+  <p>Multi-arch images default to <code>linux/amd64</code> (the report lists the others); <code>--platform os/arch</code> picks one. An archive holding several images needs <code>--tag</code>. Limits: no credentials for private registries (use <code>docker save</code>), no zstd-compressed layers (Go's standard library has no zstd decoder), no Windows container layers, and symlinked files inside Python dirs are not followed (the report counts them). No pull or restore: an image can't be changed in place, so rebuild it.</p>
+  <h3>An exported filesystem</h3>
+  <p>An unpacked rootfs (<code>docker export</code>, a chroot, a mounted disk) is scanned as a folder:</p>
+<pre><code>tickcheck --root rootfs</code></pre>
+  <p>With <code>--root</code> or <code>image</code>, the report doesn't list your own home's credential files, because they are not on the scanned machine.</p>
 </section>
 
 <section id="faq">

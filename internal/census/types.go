@@ -121,6 +121,7 @@ type Report struct {
 	Counts     Counts     `json:"counts"`
 	Unreadable int        `json:"unreadable_dirs"`
 	Feed       *IOCFeed   `json:"-"`
+	Image      *ImageInfo `json:"image,omitempty"`
 }
 
 type Counts struct {
