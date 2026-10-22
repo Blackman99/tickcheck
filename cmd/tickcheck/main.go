@@ -62,6 +62,12 @@ flags:
   --max-depth N     directory depth to walk under each root (default 12)
   --demo            run on a generated home with a defanged LiteLLM 1.107.0 drop
 
+pull flags:
+  --suspect         also pull SUSPECT hooks
+  --dry-run         list what would move, move nothing
+  --yes             don't ask (required when stdin is not a terminal)
+  --quarantine-dir DIR  where pulled files go (default ~/.tickcheck/quarantine)
+
 exit codes: 0 nothing above REVIEW · 3 SUSPECT · 4 BAD · 64 usage · 1 error
 docs: https://blackman99.github.io/tickcheck/docs/
 `
