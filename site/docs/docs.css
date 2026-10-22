@@ -3,7 +3,7 @@
 @font-face{font-family:'Xanh Mono';font-weight:400;font-display:swap;src:url(../fonts/XanhMono-400.woff2) format('woff2')}
 @font-face{font-family:'Xanh Mono';font-style:italic;font-weight:400;font-display:swap;src:url(../fonts/XanhMono-400i.woff2) format('woff2')}
 :root{--lac:#4a1a22;--lac-d:#2a0d13;--lac-h:#6e2a33;--foam:#e2e8dc;--pore:#cdd6c6;--tray:#23302a;--ink:#1e1a17;--brass:#c9b27c;
-  --bad:#ff5f1f;--sus:#d8a31a;--rev:#8592a8;--ok:#4f9d84;--chestnut:#9b5b3e;
+  --bad:#ff5f1f;--sus:#d8a31a;--rev:#8592a8;--ok:#4f9d84;--chestnut:#7a3428;
   --serif:'Young Serif',Georgia,serif;--sans:'Albert Sans',system-ui,sans-serif;--mono:'Xanh Mono',ui-monospace,monospace}
 *{box-sizing:border-box}
 html{background:var(--lac);color:var(--ink);font:17px/1.65 var(--sans);scroll-padding-top:20px}

@@ -56,7 +56,7 @@
     g.append(el('path', { d: 'M241 194 L240 164 Q241 150 248 147 L250 194 Z M271 194 L272 164 Q271 150 264 147 L262 194 Z', fill: '#1e1a17' }));
     g.append(el('rect', { x: 230, y: 186, width: 52, height: 20, rx: 5, fill: '#1e1a17' }));
     const w = eng ? 104 : 86, h = eng ? 126 : 108, cy = eng ? 322 : 312;
-    g.append(el('ellipse', { cx: 256, cy, rx: w, ry: h, fill: eng ? '#8a6a60' : '#9b5b3e', stroke: '#1e1a17', 'stroke-width': 7 }));
+    g.append(el('ellipse', { cx: 256, cy, rx: w, ry: h, fill: eng ? '#8a6a60' : '#7a3428', stroke: '#1e1a17', 'stroke-width': 7 }));
     const dots = el('g', { fill: '#1e1a17', opacity: .45 });
     for (let i = 0; i < 28; i++) {
       const a = rnd() * 6.283, r = .35 + rnd() * .55;
@@ -155,7 +155,7 @@
       g.append(liq);
       const rip = el('ellipse', { cx: cw / 2, cy: 142, rx: 0, ry: 0, fill: 'none', stroke: '#ffffff', 'stroke-width': 2, opacity: 0 });
       g.append(rip);
-      g.append(el('rect', { x: vx + 6, y: 52, width: 64, height: 26, rx: 4, fill: '#9b5b3e', stroke: '#1e1a17', 'stroke-width': 2 }));
+      g.append(el('rect', { x: vx + 6, y: 52, width: 64, height: 26, rx: 4, fill: '#7a3428', stroke: '#1e1a17', 'stroke-width': 2 }));
       const inside = el('g', {});
       g.append(inside);
       g.append(txt('~/.tickcheck/quarantine/', { x: cw / 2, y: 286, 'text-anchor': 'middle', 'font-family': 'Xanh Mono', 'font-size': 13.5, fill: '#e2e8dc' }));
