@@ -48,6 +48,24 @@ jobs:
         run: |
           set +e; ./tc --no-color; code=$?; set -e
           echo "exit $code"; test "$code" -lt 4
+  go-stable:
+    name: current stable Go (the toolchain release binaries are built with)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with: {go-version: stable}
+      - run: go version
+      - run: go vet ./...
+      - run: go test -race ./...
+      - name: no module outside the standard library
+        run: test -z "$(go list -m all | grep -v '^github.com/Blackman99/tickcheck$')"
+      - name: demo smoke
+        shell: bash
+        run: |
+          go build -o tc ./cmd/tickcheck
+          set +e; ./tc --demo --no-color > /dev/null; code=$?; set -e
+          test "$code" = 4
   real-python:
     name: real pip installs, real startup hooks (${{ matrix.os }}, Python ${{ matrix.py }})
     strategy:
