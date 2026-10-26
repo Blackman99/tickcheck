@@ -250,3 +250,21 @@ func TestRootOnlyScopesNextStepsAndSkipsHostExposure(t *testing.T) {
 		t.Fatalf("next step should repeat --root:\n%s", b.String())
 	}
 }
+
+// The win_amd64 wheel ships cook.pth with a CRLF line ending, so its hash
+// differs from the Linux/macOS one. Both must be recognised without an owner dist.
+func TestCookPthWindowsVariant(t *testing.T) {
+	h := sha256.Sum256([]byte("import cook\r\n"))
+	feed, _ := LoadIOC(nil)
+	if id, _ := feed.File(hex.EncodeToString(h[:])); id != "litellm-2026-10-21" {
+		t.Fatalf("CRLF cook.pth should match the published Windows sha256, got %q", id)
+	}
+	for _, sum := range []string{
+		"03ac2a8b752605d1d7710979c17ff18b03dd978203ba23ba97fd8ce3d6f897ea",
+		"b6122440d0d9cb1eb1ade9933f49214da8c31288de7710c076c2680dfa528465",
+	} {
+		if id, _ := feed.File(sum); id != "litellm-2026-10-21" {
+			t.Errorf("Windows payload %s… missing from feed", sum[:8])
+		}
+	}
+}
