@@ -228,7 +228,7 @@ re-check: 0 BAD hooks left in 7 environments.
     "fix": "pin litellm==1.106.2 and rebuild the env from scratch",
     "file_sha256": {
       "7f191632e7320705d154b85204f1ae546b543acbd7e8861229b76f5042b92bdb": "cook.pth (import cook)",
-      <span class="c">… cook.py, sitecustomize.py, the decoded payloads and 7 wheels</span>
+      <span class="c">… cook.py, sitecustomize.py (Linux/macOS and Windows variants), the decoded payloads and 7 wheels</span>
     },
     "host_globs": [".pc_once_*", "remote_code_loader.lock", ".pc_sq_*", ".pc_e_*"],
     "lock_files": ["remote_code_loader.lock"],
@@ -243,7 +243,7 @@ re-check: 0 BAD hooks left in 7 environments.
     <tr><td><code>lock_files</code>, <code>env_markers</code></td><td>Linux: processes holding the file open, or with the <code>KEY=value</code> in their environment.</td></tr>
     <tr><td><code>fix</code>, <code>sources</code></td><td>Printed in the <i>next</i> steps.</td></tr>
   </table>
-  <p>The built-in hashes come from the incident write-up and issue linked in <code>sources</code>; the <code>cook.pth</code> hash was also checked locally (it is <code>sha256("import cook\n")</code>).</p>
+  <p>The built-in hashes come from the incident write-up and issue linked in <code>sources</code>; the <code>cook.pth</code> hash was also checked locally (it is <code>sha256("import cook\n")</code>; the Windows wheel's CRLF copy is <code>sha256("import cook\r\n")</code>).</p>
 </section>
 
 <section id="json">
