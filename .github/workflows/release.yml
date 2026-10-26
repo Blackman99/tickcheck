@@ -8,8 +8,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with: {fetch-depth: 0}
+      # go.mod stays at go 1.22 so the module builds on 1.22, but release binaries are built
+      # with the current stable Go: 1.22 is out of support, and its net/http, crypto/tls and
+      # archive/tar fixes stopped. CI tests both.
       - uses: actions/setup-go@v6
-        with: {go-version-file: go.mod}
+        with: {go-version: stable}
       - name: tag matches the version in main.go
         run: grep -q "var version = \"${GITHUB_REF_NAME#v}\"" cmd/tickcheck/main.go
       - run: go test ./...
